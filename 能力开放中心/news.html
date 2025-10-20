@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新闻动态 - 医疗AI能力开放中心</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- 配置Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0FC6C2',
+                        accent: '#722ED1',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        neutral: '#86909C',
+                        'neutral-light': '#F2F3F5',
+                        'neutral-dark': '#4E5969'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+            .hover-lift {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .hover-lift:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(22, 93, 255, 0.1);
+            }
+        }
+        
+        @layer components {
+            .news-card {
+                @apply bg-white rounded-xl border border-gray-200 overflow-hidden hover-lift transition-custom;
+            }
+            .news-tag {
+                @apply inline-block px-3 py-1 text-xs font-medium rounded-full;
+            }
+            .news-date {
+                @apply text-sm text-neutral flex items-center gap-1;
+            }
+            .pagination-item {
+                @apply w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 text-neutral-dark hover:border-primary hover:text-primary transition-custom;
+            }
+            .pagination-item.active {
+                @apply bg-primary text-white border-primary;
+            }
+            
+            /* 价值卡片样式 */
+            .value-card {
+                @apply bg-white rounded-2xl p-8 shadow-lg transition-all duration-300 border border-primary/5 h-full;
+            }
+            
+            .value-card:hover {
+                @apply -translate-y-2 shadow-xl;
+            }
+            
+            .value-icon {
+                @apply w-16 h-16 flex items-center justify-center rounded-xl bg-primary/10 mb-6 text-primary text-2xl;
+            }
+
+            /* 客户评价样式 */
+            .testimonial-card {
+                @apply bg-white rounded-2xl p-8 shadow-lg transition-all duration-300 border border-primary/5 relative;
+            }
+            
+            .testimonial-card:hover {
+                @apply -translate-y-2 shadow-xl;
+            }
+            
+            .testimonial-avatar {
+                @apply w-16 h-16 rounded-full object-cover mr-4 border-2 border-primary/10;
+            }
+            
+            .star-rating {
+                @apply text-[#FFB400] text-lg tracking-wider;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white font-sans text-neutral-dark opacity-0 transition-opacity duration-500">
+    <!-- 导航栏 -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fa fa-heartbeat text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold text-neutral-dark">医疗AI开放平台</span>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-neutral-dark hover:text-primary transition-custom">首页</a>
+                <div class="relative group">
+                    <a href="#" class="text-neutral-dark hover:text-primary transition-custom flex items-center space-x-1">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute left-0 mt-2 w-64 bg-white shadow-lg rounded-lg overflow-hidden z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform -translate-y-2 group-hover:translate-y-0">
+                        <a href="text-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学文本分析</a>
+                        <a href="image-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block px-4 py-3 hover:bg-neutral-light">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block px-4 py-3 hover:bg-neutral-light">医学科研助手</a>
+                        <a href="education.html" class="block px-4 py-3 hover:bg-neutral-light">医学教育辅助</a>
+                        <a href="management-decision.html" class="block px-4 py-3 hover:bg-neutral-light">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="text-neutral-dark hover:text-primary transition-custom">解决方案</a>
+                <a href="api-docs.html" class="text-neutral-dark hover:text-primary transition-custom">接口开发</a>
+                <a href="news.html" class="text-primary font-medium">新闻动态</a>
+                <a href="about.html" class="text-neutral-dark hover:text-primary transition-custom">关于我们</a>
+            </nav>
+            
+            <!-- 按钮组 -->
+            <div class="flex items-center space-x-4">
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-button" class="md:hidden text-neutral-dark">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="index.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">首页</a>
+                <div class="relative">
+                    <button class="flex items-center justify-between w-full py-2 px-4 hover:bg-neutral-light rounded-lg">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </button>
+                    <div class="pl-4 mt-2 space-y-2 border-l-2 border-primary">
+                        <a href="text-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学文本分析</a>
+                        <a href="image-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block py-2 hover:bg-neutral-light rounded-lg">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学科研助手</a>
+                        <a href="education.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学教育辅助</a>
+                        <a href="management-decision.html" class="block py-2 hover:bg-neutral-light rounded-lg">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">解决方案</a>
+                <a href="api-docs.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">接口开发</a>
+                <a href="news.html" class="py-2 px-4 bg-primary/10 text-primary font-medium rounded-lg">新闻动态</a>
+                <a href="about.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 页面标题区域 -->
+    <section class="pt-28 pb-16 bg-gradient-to-r from-primary/5 to-primary/10">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-3xl mx-auto text-center">
+                <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-neutral-dark leading-tight mb-4">新闻动态</h1>
+                <p class="text-lg text-neutral mb-8">了解医疗AI开放平台的最新动态、行业资讯和技术前沿</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 热门新闻 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-neutral-dark mb-8">热门新闻</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- 主新闻 -->
+                    <div class="lg:col-span-2 news-card">
+                        <div class="relative aspect-video overflow-hidden">
+                            <img src="https://picsum.photos/id/1/1200/600" alt="公司新闻" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                            <div class="absolute top-4 left-4">
+                                <span class="news-tag bg-primary text-white">公司新闻</span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="news-date mb-4">
+                                <i class="fa fa-calendar"></i>
+                                <span>2024-05-15</span>
+                            </div>
+                            <h3 class="text-xl md:text-2xl font-bold mb-4 hover:text-primary transition-custom">医疗AI开放平台发布新一代医疗大语言模型，引领智能医疗新趋势</h3>
+                            <p class="text-neutral mb-6 line-clamp-3">近日，医疗AI开放平台正式发布新一代医疗大语言模型，该模型在医学知识理解、临床决策支持、医学文献分析等方面取得重大突破，准确率提升30%，将为医疗机构提供更强大的智能辅助工具。</p>
+                            <a href="#" class="inline-flex items-center text-primary hover:underline">
+                                <span>阅读更多</span>
+                                <i class="fa fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧新闻列表 -->
+                    <div class="flex flex-col space-y-6">
+                        <div class="news-card flex">
+                            <div class="w-1/3 h-24 flex-shrink-0 overflow-hidden">
+                                <img src="https://picsum.photos/id/20/300/200" alt="行业资讯" class="w-full h-full object-cover">
+                            </div>
+                            <div class="w-2/3 p-4">
+                                <div class="news-date mb-2">
+                                    <i class="fa fa-calendar"></i>
+                                    <span>2024-05-10</span>
+                                </div>
+                                <h3 class="text-base font-semibold mb-2 hover:text-primary transition-custom line-clamp-2">人工智能在医疗影像诊断领域的应用研究获重大进展</h3>
+                                <a href="#" class="text-sm text-primary hover:underline">阅读更多</a>
+                            </div>
+                        </div>
+                        
+                        <div class="news-card flex">
+                            <div class="w-1/3 h-24 flex-shrink-0 overflow-hidden">
+                                <img src="https://picsum.photos/id/24/300/200" alt="技术动态" class="w-full h-full object-cover">
+                            </div>
+                            <div class="w-2/3 p-4">
+                                <div class="news-date mb-2">
+                                    <i class="fa fa-calendar"></i>
+                                    <span>2024-05-05</span>
+                                </div>
+                                <h3 class="text-base font-semibold mb-2 hover:text-primary transition-custom line-clamp-2">医疗AI开放平台推出全新API接口，大幅提升开发效率</h3>
+                                <a href="#" class="text-sm text-primary hover:underline">阅读更多</a>
+                            </div>
+                        </div>
+                        
+                        <div class="news-card flex">
+                            <div class="w-1/3 h-24 flex-shrink-0 overflow-hidden">
+                                <img src="https://picsum.photos/id/36/300/200" alt="合作动态" class="w-full h-full object-cover">
+                            </div>
+                            <div class="w-2/3 p-4">
+                                <div class="news-date mb-2">
+                                    <i class="fa fa-calendar"></i>
+                                    <span>2024-04-28</span>
+                                </div>
+                                <h3 class="text-base font-semibold mb-2 hover:text-primary transition-custom line-clamp-2">医疗AI开放平台与多家三甲医院达成战略合作，共同推动智慧医疗建设</h3>
+                                <a href="#" class="text-sm text-primary hover:underline">阅读更多</a>
+                            </div>
+                        </div>
+                        
+                        <div class="news-card flex">
+                            <div class="w-1/3 h-24 flex-shrink-0 overflow-hidden">
+                                <img src="https://picsum.photos/id/48/300/200" alt="行业资讯" class="w-full h-full object-cover">
+                            </div>
+                            <div class="w-2/3 p-4">
+                                <div class="news-date mb-2">
+                                    <i class="fa fa-calendar"></i>
+                                    <span>2024-04-20</span>
+                                </div>
+                                <h3 class="text-base font-semibold mb-2 hover:text-primary transition-custom line-clamp-2">2024医疗AI技术应用白皮书发布，医疗AI开放平台参与编写</h3>
+                                <a href="#" class="text-sm text-primary hover:underline">阅读更多</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 新闻分类与内容 -->
+    <section class="py-16 bg-neutral-light">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- 左侧内容 -->
+                <div class="lg:w-2/3">
+                    <!-- 分类标签 -->
+                    <div class="flex flex-wrap gap-3 mb-8 category-buttons">
+                        <button class="px-4 py-2 bg-primary text-white rounded-lg">全部</button>
+                        <button class="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-custom">公司新闻</button>
+                        <button class="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-custom">行业资讯</button>
+                        <button class="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-custom">技术动态</button>
+                        <button class="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-custom">合作动态</button>
+                        <button class="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-primary hover:text-primary transition-custom">活动通知</button>
+                    </div>
+                    
+                    <!-- 新闻列表 -->
+                    <div class="space-y-8">
+                        <div class="news-card flex flex-col md:flex-row">
+                            <div class="md:w-2/5 aspect-video md:aspect-auto overflow-hidden">
+                                <img src="https://picsum.photos/id/60/600/400" alt="公司新闻" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                            </div>
+                            <div class="md:w-3/5 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="news-tag bg-primary text-white">公司新闻</span>
+                                    <div class="news-date">
+                                        <i class="fa fa-calendar"></i>
+                                        <span>2024-05-15</span>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-bold mb-4 hover:text-primary transition-custom">医疗AI开放平台发布新一代医疗大语言模型，引领智能医疗新趋势</h3>
+                                <p class="text-neutral mb-4 line-clamp-3">近日，医疗AI开放平台正式发布新一代医疗大语言模型，该模型在医学知识理解、临床决策支持、医学文献分析等方面取得重大突破，准确率提升30%，将为医疗机构提供更强大的智能辅助工具。新一代医疗大语言模型基于最新的深度学习架构，融合了海量医学文献、临床指南和真实病例数据，能够理解复杂的医学问题，提供准确的医疗知识支持。</p>
+                                <a href="#" class="inline-flex items-center text-primary hover:underline">
+                                    <span>阅读更多</span>
+                                    <i class="fa fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="news-card flex flex-col md:flex-row">
+                            <div class="md:w-2/5 aspect-video md:aspect-auto overflow-hidden">
+                                <img src="https://picsum.photos/id/76/600/400" alt="行业资讯" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                            </div>
+                            <div class="md:w-3/5 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="news-tag bg-secondary text-white">行业资讯</span>
+                                    <div class="news-date">
+                                        <i class="fa fa-calendar"></i>
+                                        <span>2024-05-10</span>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-bold mb-4 hover:text-primary transition-custom">人工智能在医疗影像诊断领域的应用研究获重大进展</h3>
+                                <p class="text-neutral mb-4 line-clamp-3">近日，《自然·医学》期刊发表了关于人工智能在医疗影像诊断领域的最新研究成果，显示AI辅助诊断系统在肺部CT、乳腺X光、脑部MRI等多种影像检查中的准确率已超过95%，能够有效提高疾病早期检出率，减轻医生工作负担。该研究由多家知名医学院校和AI研究机构共同完成，医疗AI开放平台参与其中的技术支持工作。</p>
+                                <a href="#" class="inline-flex items-center text-primary hover:underline">
+                                    <span>阅读更多</span>
+                                    <i class="fa fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="news-card flex flex-col md:flex-row">
+                            <div class="md:w-2/5 aspect-video md:aspect-auto overflow-hidden">
+                                <img src="https://picsum.photos/id/96/600/400" alt="技术动态" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                            </div>
+                            <div class="md:w-3/5 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="news-tag bg-accent text-white">技术动态</span>
+                                    <div class="news-date">
+                                        <i class="fa fa-calendar"></i>
+                                        <span>2024-05-05</span>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-bold mb-4 hover:text-primary transition-custom">医疗AI开放平台推出全新API接口，大幅提升开发效率</h3>
+                                <p class="text-neutral mb-4 line-clamp-3">医疗AI开放平台近日宣布推出全新一代API接口，该接口采用RESTful设计风格，提供更丰富的功能和更友好的开发体验。新版本API在性能、安全性和易用性方面进行了全面升级，支持更多编程语言和开发框架，同时提供详细的开发文档和示例代码，帮助开发者快速集成医疗AI能力。据测试，使用新API接口可以将开发效率提升40%以上。</p>
+                                <a href="#" class="inline-flex items-center text-primary hover:underline">
+                                    <span>阅读更多</span>
+                                    <i class="fa fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="news-card flex flex-col md:flex-row">
+                            <div class="md:w-2/5 aspect-video md:aspect-auto overflow-hidden">
+                                <img src="https://picsum.photos/id/110/600/400" alt="合作动态" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                            </div>
+                            <div class="md:w-3/5 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="news-tag bg-warning text-white">合作动态</span>
+                                    <div class="news-date">
+                                        <i class="fa fa-calendar"></i>
+                                        <span>2024-04-28</span>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-bold mb-4 hover:text-primary transition-custom">医疗AI开放平台与多家三甲医院达成战略合作，共同推动智慧医疗建设</h3>
+                                <p class="text-neutral mb-4 line-clamp-3">医疗AI开放平台今日宣布与全国10家知名三甲医院签署战略合作协议，将在医疗AI技术研发、临床应用和人才培养等方面展开深入合作。根据协议，双方将共同建立医疗AI联合实验室，开展前沿技术研究和产品验证，推动AI技术在临床场景中的落地应用，为患者提供更高效、精准的医疗服务。</p>
+                                <a href="#" class="inline-flex items-center text-primary hover:underline">
+                                    <span>阅读更多</span>
+                                    <i class="fa fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="news-card flex flex-col md:flex-row">
+                            <div class="md:w-2/5 aspect-video md:aspect-auto overflow-hidden">
+                                <img src="https://picsum.photos/id/126/600/400" alt="行业资讯" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                            </div>
+                            <div class="md:w-3/5 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="news-tag bg-secondary text-white">行业资讯</span>
+                                    <div class="news-date">
+                                        <i class="fa fa-calendar"></i>
+                                        <span>2024-04-20</span>
+                                    </div>
+                                </div>
+                                <h3 class="text-xl font-bold mb-4 hover:text-primary transition-custom">2024医疗AI技术应用白皮书发布，医疗AI开放平台参与编写</h3>
+                                <p class="text-neutral mb-4 line-clamp-3">由中国医疗AI产业联盟组织编写的《2024医疗AI技术应用白皮书》正式发布，该白皮书全面分析了医疗AI行业的发展现状、技术趋势和应用前景，为行业发展提供了重要参考。医疗AI开放平台作为主要参与单位之一，负责撰写了"医疗AI API开放与标准化"和"医疗大语言模型应用"两个重要章节，分享了平台在医疗AI技术开放方面的实践经验和未来规划。</p>
+                                <a href="#" class="inline-flex items-center text-primary hover:underline">
+                                    <span>阅读更多</span>
+                                    <i class="fa fa-arrow-right ml-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 分页 -->
+                    <div class="flex justify-center mt-12">
+                        <div class="flex items-center space-x-2">
+                            <button class="pagination-item">
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <button class="pagination-item active">1</button>
+                            <button class="pagination-item">2</button>
+                            <button class="pagination-item">3</button>
+                            <button class="pagination-item">4</button>
+                            <button class="pagination-item">5</button>
+                            <span class="text-neutral-dark mx-2">...</span>
+                            <button class="pagination-item">10</button>
+                            <button class="pagination-item">
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧边栏 -->
+                <div class="lg:w-1/3">
+                    <!-- 搜索框 -->
+                    <div class="bg-white rounded-xl border border-neutral-200 p-4 mb-8">
+                        <div class="relative">
+                            <input type="text" class="w-full pl-10 pr-4 py-2 rounded-lg border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary" placeholder="搜索新闻...">
+                            <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- 最新资讯 -->
+                    <div class="bg-white rounded-xl border border-neutral-200 p-6 mb-8">
+                        <h3 class="text-xl font-bold mb-6 flex items-center">
+                            <i class="fa fa-newspaper-o text-primary mr-2"></i>
+                            最新资讯
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex gap-4">
+                                <div class="w-16 h-16 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <img src="https://picsum.photos/id/138/100/100" alt="新闻图片" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <div class="text-xs text-neutral mb-1">2024-05-18</div>
+                                    <h4 class="text-sm font-semibold hover:text-primary transition-custom line-clamp-2">医疗AI开放平台举办2024医疗AI技术创新峰会</h4>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-16 h-16 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <img src="https://picsum.photos/id/148/100/100" alt="新闻图片" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <div class="text-xs text-neutral mb-1">2024-05-16</div>
+                                    <h4 class="text-sm font-semibold hover:text-primary transition-custom line-clamp-2">医疗AI开放平台荣获"2024年度医疗科技创新奖"</h4>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-16 h-16 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <img src="https://picsum.photos/id/158/100/100" alt="新闻图片" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <div class="text-xs text-neutral mb-1">2024-05-12</div>
+                                    <h4 class="text-sm font-semibold hover:text-primary transition-custom line-clamp-2">医疗AI开放平台推出医学教育AI助手，助力医学教育改革</h4>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-16 h-16 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <img src="https://picsum.photos/id/168/100/100" alt="新闻图片" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <div class="text-xs text-neutral mb-1">2024-05-08</div>
+                                    <h4 class="text-sm font-semibold hover:text-primary transition-custom line-clamp-2">医疗AI开放平台发布《医疗AI应用白皮书2024》</h4>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-16 h-16 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <img src="https://picsum.photos/id/178/100/100" alt="新闻图片" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <div class="text-xs text-neutral mb-1">2024-05-03</div>
+                                    <h4 class="text-sm font-semibold hover:text-primary transition-custom line-clamp-2">医疗AI开放平台加入国家医疗健康数据安全联盟</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 热门标签 -->
+                    <div class="bg-white rounded-xl border border-neutral-200 p-6 mb-8">
+                        <h3 class="text-xl font-bold mb-6 flex items-center">
+                            <i class="fa fa-tags text-primary mr-2"></i>
+                            热门标签
+                        </h3>
+                        <div class="flex flex-wrap gap-2">
+                            <a href="#" class="px-3 py-1 bg-neutral-light text-neutral-dark rounded-full text-sm hover:bg-primary hover:text-white transition-custom">医疗AI</a>
+                            <a href="#" class="px-3 py-1 bg-neutral-light text-neutral-dark rounded-full text-sm hover:bg-primary hover:text-white transition-custom">大语言模型</a>
+                            <a href="#" class="px-3 py-1 bg-neutral-light text-neutral-dark rounded-full text-sm hover:bg-primary hover:text-white transition-custom">医学影像</a>
+                            <a href="#" class="px-3 py-1 bg-neutral-light text-neutral-dark rounded-full text-sm hover:bg-primary hover:text-white transition-custom">智能问诊</a>
+                            <a href="#" class="px-3 py-1 bg-neutral-light text-neutral-dark rounded-full text-sm hover:bg-primary hover:text-white transition-custom">医学教育</a>
+                            <a href="#" class="px-3 py-1 bg-neutral-light text-neutral-dark rounded-full text-sm hover:bg-primary hover:text-white transition-custom">科研助手</a>
+                            <a href="#" class="px-3 py-1 bg-neutral-light text-neutral-dark rounded-full text-sm hover:bg-primary hover:text-white transition-custom">智慧医院</a>
+                            <a href="#" class="px-3 py-1 bg-neutral-light text-neutral-dark rounded-full text-sm hover:bg-primary hover:text-white transition-custom">医疗大数据</a>
+                            <a href="#" class="px-3 py-1 bg-neutral-light text-neutral-dark rounded-full text-sm hover:bg-primary hover:text-white transition-custom">API接口</a>
+                            <a href="#" class="px-3 py-1 bg-neutral-light text-neutral-dark rounded-full text-sm hover:bg-primary hover:text-white transition-custom">技术创新</a>
+                        </div>
+                    </div>
+                    
+                    <!-- 活动日历 -->
+                    <div class="bg-white rounded-xl border border-neutral-200 p-6 mb-8">
+                        <h3 class="text-xl font-bold mb-6 flex items-center">
+                            <i class="fa fa-calendar text-primary mr-2"></i>
+                            活动日历
+                        </h3>
+                        <div class="text-center mb-4">
+                            <h4 class="text-lg font-semibold">2024年5月</h4>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1 text-center mb-4">
+                            <div class="text-xs text-neutral">日</div>
+                            <div class="text-xs text-neutral">一</div>
+                            <div class="text-xs text-neutral">二</div>
+                            <div class="text-xs text-neutral">三</div>
+                            <div class="text-xs text-neutral">四</div>
+                            <div class="text-xs text-neutral">五</div>
+                            <div class="text-xs text-neutral">六</div>
+                            <div class="text-xs text-neutral p-2"></div>
+                            <div class="text-xs text-neutral p-2"></div>
+                            <div class="text-xs p-2"></div>
+                            <div class="text-xs p-2"></div>
+                            <div class="text-xs p-2"></div>
+                            <div class="text-xs p-2"></div>
+                            <div class="text-xs p-2">4</div>
+                            <div class="text-xs p-2">5</div>
+                            <div class="text-xs p-2">6</div>
+                            <div class="text-xs p-2">7</div>
+                            <div class="text-xs p-2">8</div>
+                            <div class="text-xs p-2">9</div>
+                            <div class="text-xs p-2">10</div>
+                            <div class="text-xs p-2">11</div>
+                            <div class="text-xs p-2">12</div>
+                            <div class="text-xs p-2">13</div>
+                            <div class="text-xs p-2">14</div>
+                            <div class="text-xs p-2 bg-primary text-white rounded-full">15</div>
+                            <div class="text-xs p-2">16</div>
+                            <div class="text-xs p-2">17</div>
+                            <div class="text-xs p-2">18</div>
+                            <div class="text-xs p-2 bg-primary text-white rounded-full">19</div>
+                            <div class="text-xs p-2">20</div>
+                            <div class="text-xs p-2">21</div>
+                            <div class="text-xs p-2">22</div>
+                            <div class="text-xs p-2">23</div>
+                            <div class="text-xs p-2">24</div>
+                            <div class="text-xs p-2 bg-primary text-white rounded-full">25</div>
+                            <div class="text-xs p-2">26</div>
+                            <div class="text-xs p-2">27</div>
+                            <div class="text-xs p-2">28</div>
+                            <div class="text-xs p-2">29</div>
+                            <div class="text-xs p-2">30</div>
+                            <div class="text-xs p-2">31</div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="border-l-4 border-primary pl-4">
+                                <div class="text-sm font-semibold">5月15日 - 医疗AI技术创新峰会</div>
+                                <div class="text-xs text-neutral">北京 · 国家会议中心</div>
+                            </div>
+                            <div class="border-l-4 border-primary pl-4">
+                                <div class="text-sm font-semibold">5月19日 - 医疗AI开发者大会</div>
+                                <div class="text-xs text-neutral">线上直播</div>
+                            </div>
+                            <div class="border-l-4 border-primary pl-4">
+                                <div class="text-sm font-semibold">5月25日 - 医学影像AI应用研讨会</div>
+                                <div class="text-xs text-neutral">上海 · 国际医学创新中心</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 订阅新闻 -->
+                    <div class="bg-gradient-to-r from-primary/10 to-primary/20 rounded-xl p-6">
+                        <h3 class="text-xl font-bold mb-4">订阅新闻</h3>
+                        <p class="text-neutral-dark mb-6">订阅我们的新闻邮件，获取最新的医疗AI资讯和平台动态</p>
+                        <form>
+                            <div class="mb-4">
+                                <input type="email" class="w-full px-4 py-2 rounded-lg border border-white/30 bg-white/80 focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="请输入您的邮箱地址">
+                            </div>
+                            <button type="submit" class="w-full py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom">订阅</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 推荐阅读 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <h2 class="text-2xl font-bold text-neutral-dark mb-8">推荐阅读</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="news-card">
+                    <div class="aspect-video overflow-hidden">
+                        <img src="https://picsum.photos/id/192/600/400" alt="推荐阅读" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                    </div>
+                    <div class="p-6">
+                        <div class="news-date mb-4">
+                            <i class="fa fa-calendar"></i>
+                            <span>2024-05-01</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-4 hover:text-primary transition-custom">医疗AI技术在慢性病管理中的应用与实践</h3>
+                        <p class="text-neutral mb-6 line-clamp-3">慢性病管理是医疗AI技术应用的重要领域，本文探讨了医疗AI在糖尿病、高血压等慢性病管理中的具体应用场景和实践效果。</p>
+                        <a href="#" class="inline-flex items-center text-primary hover:underline">
+                            <span>阅读更多</span>
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="news-card">
+                    <div class="aspect-video overflow-hidden">
+                        <img src="https://picsum.photos/id/200/600/400" alt="推荐阅读" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                    </div>
+                    <div class="p-6">
+                        <div class="news-date mb-4">
+                            <i class="fa fa-calendar"></i>
+                            <span>2024-04-25</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-4 hover:text-primary transition-custom">大语言模型在医学教育中的创新应用</h3>
+                        <p class="text-neutral mb-6 line-clamp-3">大语言模型为医学教育带来了新的可能性，本文介绍了如何利用大语言模型开发个性化学习路径、虚拟病例学习系统等创新应用。</p>
+                        <a href="#" class="inline-flex items-center text-primary hover:underline">
+                            <span>阅读更多</span>
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="news-card">
+                    <div class="aspect-video overflow-hidden">
+                        <img src="https://picsum.photos/id/208/600/400" alt="推荐阅读" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                    </div>
+                    <div class="p-6">
+                        <div class="news-date mb-4">
+                            <i class="fa fa-calendar"></i>
+                            <span>2024-04-20</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-4 hover:text-primary transition-custom">医疗AI伦理与隐私保护：平衡创新与责任</h3>
+                        <p class="text-neutral mb-6 line-clamp-3">随着医疗AI技术的广泛应用，伦理问题和隐私保护日益受到关注，本文探讨了如何在推动技术创新的同时，确保伦理合规和隐私安全。</p>
+                        <a href="#" class="inline-flex items-center text-primary hover:underline">
+                            <span>阅读更多</span>
+                            <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral-dark text-white pt-16 pb-8">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                            <i class="fa fa-heartbeat text-primary text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold">医疗AI开放平台</span>
+                    </div>
+                    <p class="text-neutral-light mb-4">赋能医疗创新，助力智能医疗发展，提供专业的医疗AI能力服务。</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-weixin text-xl"></i></a>
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-weibo text-xl"></i></a>
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-github text-xl"></i></a>
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-linkedin text-xl"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">产品服务</h3>
+                    <ul class="space-y-2">
+                        <li><a href="text-analysis.html" class="text-neutral-light hover:text-white transition-custom">医学文本分析</a></li>
+                        <li><a href="image-analysis.html" class="text-neutral-light hover:text-white transition-custom">医学影像智能分析</a></li>
+                        <li><a href="chatbot.html" class="text-neutral-light hover:text-white transition-custom">智能问诊与对话</a></li>
+                        <li><a href="research-assistant.html" class="text-neutral-light hover:text-white transition-custom">医学科研助手</a></li>
+                        <li><a href="education.html" class="text-neutral-light hover:text-white transition-custom">医学教育辅助</a></li>
+                        <li><a href="management-decision.html" class="text-neutral-light hover:text-white transition-custom">医疗管理决策支持</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">解决方案</h3>
+                    <ul class="space-y-2">
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">智慧医院解决方案</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">基层医疗AI赋能</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">医学教育智能化</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">医学科研加速器</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">医院运营智能决策</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">智慧健康管理平台</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">关于我们</h3>
+                    <ul class="space-y-2">
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">公司介绍</a></li>
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">核心团队</a></li>
+                        <li><a href="news.html" class="text-neutral-light hover:text-white transition-custom">新闻动态</a></li>
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">加入我们</a></li>
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">联系我们</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-neutral-light/10 text-center text-neutral-light">
+                <p>&copy; 2023 医疗AI能力开放中心. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 z-50">
+        <i class="fa fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // 页面加载完成后的动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('opacity-100');
+            document.body.classList.remove('opacity-0');
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 10) {
+                    navbar.classList.add('shadow-md');
+                    navbar.classList.remove('shadow-sm');
+                } else {
+                    navbar.classList.remove('shadow-md');
+                    navbar.classList.add('shadow-sm');
+                }
+            });
+            
+            // 移动端菜单切换
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                    
+                    // 关闭移动端菜单
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+            
+            // 回到顶部按钮
+            const backToTopButton = document.getElementById('back-to-top');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.remove('opacity-0', 'invisible');
+                    backToTopButton.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopButton.classList.add('opacity-0', 'invisible');
+                    backToTopButton.classList.remove('opacity-100', 'visible');
+                }
+            });
+            
+            backToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 分类标签点击效果
+            const categoryButtons = document.querySelectorAll('.category-buttons button');
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的选中状态
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('bg-primary', 'text-white');
+                        btn.classList.add('bg-white', 'border', 'border-gray-200');
+                    });
+                    
+                    // 添加当前按钮的选中状态
+                    this.classList.remove('bg-white', 'border', 'border-gray-200');
+                    this.classList.add('bg-primary', 'text-white');
+                    
+                    // 这里可以添加根据分类筛选新闻的逻辑
+                });
+            });
+            
+            // 分页按钮点击效果
+            const paginationItems = document.querySelectorAll('.pagination-item');
+            paginationItems.forEach(item => {
+                if (!item.querySelector('i')) { // 排除箭头按钮
+                    item.addEventListener('click', function() {
+                        // 移除所有按钮的激活状态
+                        paginationItems.forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        
+                        // 添加当前按钮的激活状态
+                        this.classList.add('active');
+                        
+                        // 这里可以添加分页逻辑
+                    });
+                }
+            });
+            
+            // 为所有卡片添加悬停效果动画
+            const hoverCards = document.querySelectorAll('.hover-lift');
+            hoverCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 10px 25px -5px rgba(22, 93, 255, 0.1)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.05)';
+                });
+            });
+            
+            // 新闻订阅表单提交处理
+            const subscribeForm = document.querySelector('.bg-gradient-to-r form');
+            if (subscribeForm) {
+                subscribeForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // 这里可以添加表单验证和提交逻辑
+                    alert('订阅成功！您将定期收到我们的新闻动态。');
+                    subscribeForm.reset();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

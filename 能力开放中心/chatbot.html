@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能问诊与对话 - 医疗AI能力开放中心</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0FC6C2',
+                        tertiary: '#722ED1',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        dark: '#1D2129',
+                        light: '#F2F3F5',
+                        'neutral-100': '#FFFFFF',
+                        'neutral-200': '#F7F8FA',
+                        'neutral-300': '#E5E6EB',
+                        'neutral-400': '#C9CDD4',
+                        'neutral-500': '#86909C',
+                        'neutral-600': '#4E5969',
+                        'neutral-700': '#272E3B',
+                        'neutral-800': '#1D2129',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 16px rgba(0, 0, 0, 0.08)',
+                        'medium': '0 8px 32px rgba(0, 0, 0, 0.12)',
+                        'strong': '0 16px 48px rgba(0, 0, 0, 0.16)',
+                    }
+                },
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #165DFF 0%, #0FC6C2 100%);
+            }
+            .bg-gradient-secondary {
+                background: linear-gradient(135deg, #722ED1 0%, #165DFF 100%);
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .scale-hover {
+                @apply hover:scale-105 transition-all duration-300;
+            }
+            .card-hover {
+                @apply hover:shadow-medium hover:-translate-y-1 transition-all duration-300;
+            }
+            .glass-effect {
+                @apply bg-white/80 backdrop-blur-md;
+            }
+            .chat-bubble-user {
+                @apply bg-primary text-white rounded-2xl rounded-bl-none p-4 max-w-[85%] self-end mb-4 shadow-sm;
+            }
+            .chat-bubble-ai {
+                @apply bg-white text-neutral-800 rounded-2xl rounded-br-none p-4 max-w-[85%] self-start mb-4 shadow-sm border border-neutral-200;
+            }
+            .chat-input-box {
+                @apply w-full px-4 py-3 rounded-full border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all;
+            }
+            .chat-avatar {
+                @apply w-10 h-10 rounded-full flex items-center justify-center font-bold text-white mr-3;
+            }
+            .feature-badge {
+                @apply inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full;
+            }
+            /* 价值卡片样式 */
+            .value-card {
+                @apply bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-neutral-100;
+            }
+            .value-icon {
+                @apply w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6;
+            }
+            /* 客户评价样式 */
+            .testimonial-card {
+                @apply bg-white p-8 rounded-2xl shadow-md border border-neutral-100;
+            }
+            .testimonial-avatar {
+                @apply w-12 h-12 rounded-full mr-4;
+            }
+            .star-rating {
+                @apply text-yellow-400 mb-4;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-neutral-200 text-neutral-800 overflow-x-hidden">
+    <!-- 导航栏 -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fa fa-heartbeat text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold text-neutral-dark">医疗AI开放平台</span>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-neutral-dark hover:text-primary transition-custom">首页</a>
+                <div class="relative group">
+                    <a href="#" class="text-primary font-medium flex items-center space-x-1">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute left-0 mt-2 w-64 bg-white shadow-lg rounded-lg overflow-hidden z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform -translate-y-2 group-hover:translate-y-0">
+                        <a href="text-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学文本分析</a>
+                        <a href="image-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block px-4 py-3 bg-primary/10 text-primary">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block px-4 py-3 hover:bg-neutral-light">医学科研助手</a>
+                        <a href="education.html" class="block px-4 py-3 hover:bg-neutral-light">医学教育辅助</a>
+                        <a href="management-decision.html" class="block px-4 py-3 hover:bg-neutral-light">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="text-neutral-dark hover:text-primary transition-custom">解决方案</a>
+                <a href="api-docs.html" class="text-neutral-dark hover:text-primary transition-custom">接口开发</a>
+                <a href="news.html" class="text-neutral-dark hover:text-primary transition-custom">新闻动态</a>
+                    <a href="ai-results-dashboard.html" class="text-neutral-dark hover:text-primary transition-custom">统计面板</a>
+                <a href="about.html" class="text-neutral-dark hover:text-primary transition-custom">关于我们</a>
+            </nav>
+            
+            <!-- 按钮组 -->
+            <div class="flex items-center space-x-4">
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-button" class="md:hidden text-neutral-dark">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="index.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">首页</a>
+                <div class="relative">
+                    <button class="flex items-center justify-between w-full py-2 px-4 hover:bg-neutral-light rounded-lg">
+                        <span class="text-primary font-medium">核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </button>
+                    <div class="pl-4 mt-2 space-y-2 border-l-2 border-primary">
+                        <a href="text-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学文本分析</a>
+                        <a href="image-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block py-2 bg-primary/10 text-primary rounded-lg">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学科研助手</a>
+                        <a href="education.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学教育辅助</a>
+                        <a href="management-decision.html" class="block py-2 hover:bg-neutral-light rounded-lg">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">解决方案</a>
+                <a href="api-docs.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">接口开发</a>
+                <a href="news.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">新闻动态</a>
+                <a href="ai-results-dashboard.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">统计面板</a>
+                <a href="about.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 页面标题区域 -->
+    <section class="pt-32 pb-16 bg-gradient-to-b from-primary/5 to-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex items-center mb-4">
+                    <a href="index.html#features" class="text-neutral-600 hover:text-primary transition-colors mr-2">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                    <span class="text-neutral-600">返回核心能力</span>
+                </div>
+                <h1 class="text-[clamp(2rem,4vw,3rem)] font-bold leading-tight text-neutral-800 mb-6">
+                    智能问诊与对话
+                </h1>
+                <p class="text-[clamp(1rem,2vw,1.25rem)] text-neutral-600 mb-8 max-w-3xl">
+                    基于医疗大语言模型的智能问诊系统，提供自然语言对话、症状分析、健康指导和初步诊断建议，助力医疗机构提升服务效率
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <span class="px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">智能问诊</span>
+                    <span class="px-4 py-1 bg-secondary/10 text-secondary rounded-full text-sm font-medium">健康咨询</span>
+                    <span class="px-4 py-1 bg-tertiary/10 text-tertiary rounded-full text-sm font-medium">用药指导</span>
+                    <span class="px-4 py-1 bg-warning/10 text-warning rounded-full text-sm font-medium">慢病管理</span>
+                    <span class="px-4 py-1 bg-success/10 text-success rounded-full text-sm font-medium">科普教育</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 智能问诊演示 -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-800 mb-4">
+                    智能问诊演示
+                </h2>
+                <p class="text-neutral-600 text-lg">
+                    与AI医生进行自然语言对话，体验智能化医疗咨询服务
+                </p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto bg-neutral-100 rounded-2xl shadow-soft overflow-hidden">
+                <!-- 聊天窗口头部 -->
+                <div class="bg-primary text-white p-4 flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3">
+                        <i class="fa fa-user-md text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold">智能医生助手</h3>
+                        <p class="text-xs text-white/80">在线 · 响应时间 <1秒</p>
+                    </div>
+                    <div class="ml-auto flex space-x-3">
+                        <button class="text-white/80 hover:text-white"><i class="fa fa-info-circle"></i></button>
+                        <button class="text-white/80 hover:text-white"><i class="fa fa-ellipsis-v"></i></button>
+                    </div>
+                </div>
+                
+                <!-- 聊天内容区域 -->
+                <div class="p-6 h-[600px] overflow-y-auto bg-neutral-50" id="chat-container">
+                    <!-- AI欢迎消息 -->
+                    <div class="flex items-start mb-6">
+                        <div class="chat-avatar bg-primary">
+                            <i class="fa fa-robot"></i>
+                        </div>
+                        <div class="chat-bubble-ai">
+                            <p>您好！我是智能医生助手，很高兴为您提供健康咨询服务。请问您有什么不适症状或健康问题需要咨询吗？</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 用户问题1 -->
+                    <div class="flex items-start justify-end mb-6">
+                        <div class="chat-bubble-user">
+                            <p>医生，我最近总是感觉头痛，特别是早上起床的时候，已经持续一周了。</p>
+                        </div>
+                        <div class="chat-avatar bg-secondary order-last">
+                            <i class="fa fa-user"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- AI回复1 -->
+                    <div class="flex items-start mb-6">
+                        <div class="chat-avatar bg-primary">
+                            <i class="fa fa-robot"></i>
+                        </div>
+                        <div class="chat-bubble-ai">
+                            <p>感谢您的描述。为了能够更好地了解您的情况，请问：</p>
+                            <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                                <li>头痛的部位在哪里？(例如：前额、太阳穴、后脑勺等)</li>
+                                <li>头痛的性质是怎样的？(例如：刺痛、胀痛、跳痛等)</li>
+                                <li>疼痛的程度如何？(1-10分，10分为最痛)</li>
+                                <li>最近工作或生活压力大吗？睡眠质量如何？</li>
+                                <li>是否有伴随其他症状，如恶心、呕吐、视力模糊等？</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- 用户问题2 -->
+                    <div class="flex items-start justify-end mb-6">
+                        <div class="chat-bubble-user">
+                            <p>头痛主要在前额和太阳穴，是一种胀痛，大概5-6分的程度。最近工作压力比较大，经常熬夜到很晚，睡眠质量不太好。偶尔会有轻微的恶心感，但没有呕吐。</p>
+                        </div>
+                        <div class="chat-avatar bg-secondary order-last">
+                            <i class="fa fa-user"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- AI回复2 -->
+                    <div class="flex items-start mb-6">
+                        <div class="chat-avatar bg-primary">
+                            <i class="fa fa-robot"></i>
+                        </div>
+                        <div class="chat-bubble-ai">
+                            <p>根据您的描述，您的头痛可能与工作压力大、睡眠不足有关，属于紧张性头痛的表现。以下是一些建议：</p>
+                            <div class="mt-3 space-y-2">
+                                <div class="flex items-start">
+                                    <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                                    <p><strong>调整作息：</strong>尽量保持规律的作息时间，每天保证7-8小时的睡眠时间</p>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                                    <p><strong>减轻压力：</strong>适当进行放松活动，如冥想、深呼吸、瑜伽等</p>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                                    <p><strong>注意姿势：</strong>工作时保持正确的坐姿，避免长时间低头看电脑或手机</p>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                                    <p><strong>饮食调整：</strong>减少咖啡因和酒精摄入，多喝水，保持饮食均衡</p>
+                                </div>
+                            </div>
+                            <p class="mt-3 text-neutral-700">如果头痛持续加重或出现其他症状，建议您尽快就医进行详细检查，排除其他潜在疾病。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 用户问题3 -->
+                    <div class="flex items-start justify-end mb-6">
+                        <div class="chat-bubble-user">
+                            <p>那我需要吃什么药物来缓解吗？</p>
+                        </div>
+                        <div class="chat-avatar bg-secondary order-last">
+                            <i class="fa fa-user"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- AI回复3 -->
+                    <div class="flex items-start mb-6">
+                        <div class="chat-avatar bg-primary">
+                            <i class="fa fa-robot"></i>
+                        </div>
+                        <div class="chat-bubble-ai">
+                            <p>对于轻度到中度的紧张性头痛，可以考虑以下药物缓解：</p>
+                            <div class="mt-3 space-y-3 bg-neutral-100 p-4 rounded-lg">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="font-medium">对乙酰氨基酚</p>
+                                        <p class="text-xs text-neutral-500">成人剂量：500-1000mg，每4-6小时一次，24小时内不超过4000mg</p>
+                                    </div>
+                                    <feature-badge>推荐</feature-badge>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="font-medium">布洛芬</p>
+                                        <p class="text-xs text-neutral-500">成人剂量：200-400mg，每4-6小时一次，24小时内不超过1200mg</p>
+                                    </div>
+                                    <feature-badge>备选</feature-badge>
+                                </div>
+                            </div>
+                            <p class="mt-3 text-neutral-700">请按照药品说明书或在医生指导下使用。如果用药后症状没有缓解，或者头痛频繁发作，建议您咨询医生获取更专业的建议。</p>
+                            <div class="mt-3 p-3 bg-warning/10 rounded-lg text-sm">
+                                <i class="fa fa-exclamation-circle text-warning mr-2"></i>
+                                <span>药物只能缓解症状，不能解决根本问题。建议您优先调整生活方式和工作习惯。</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 聊天输入区域 -->
+                <div class="p-4 border-t border-neutral-200 bg-white">
+                    <form id="chat-form" class="flex items-center space-x-3">
+                        <input type="text" id="chat-input" placeholder="请输入您的问题..." class="chat-input-box">
+                        <button type="submit" class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 核心功能 -->
+    <section class="py-20 bg-neutral-100">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-800 mb-4">
+                    核心功能特点
+                </h2>
+                <p class="text-neutral-600 text-lg">
+                    基于医疗大语言模型，提供专业、智能的医疗咨询服务
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 功能1 -->
+                <div class="bg-white rounded-2xl p-8 shadow-soft card-hover">
+                    <div class="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+                        <i class="fa fa-comments text-2xl text-primary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-neutral-800">自然语言交互</h3>
+                    <p class="text-neutral-600 mb-6">
+                        支持多轮对话交互，能够理解复杂的自然语言问题，提供流畅的对话体验
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>支持上下文理解和多轮对话</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>理解医学术语和日常表达</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>引导用户提供完整的症状信息</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- 功能2 -->
+                <div class="bg-white rounded-2xl p-8 shadow-soft card-hover">
+                    <div class="w-16 h-16 rounded-xl bg-secondary/10 flex items-center justify-center mb-6">
+                        <i class="fa fa-stethoscope text-2xl text-secondary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-neutral-800">症状分析与指导</h3>
+                    <p class="text-neutral-600 mb-6">
+                        基于症状描述进行初步分析，提供健康建议、用药指导和就医建议
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>常见疾病的症状识别与分析</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>提供合理的健康建议和护理措施</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>根据症状严重程度提供就医建议</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- 功能3 -->
+                <div class="bg-white rounded-2xl p-8 shadow-soft card-hover">
+                    <div class="w-16 h-16 rounded-xl bg-tertiary/10 flex items-center justify-center mb-6">
+                        <i class="fa fa-medkit text-2xl text-tertiary"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-neutral-800">用药指导</h3>
+                    <p class="text-neutral-600 mb-6">
+                        提供常见疾病的用药建议，包括药物选择、剂量指导、注意事项等
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>常用药物信息查询和使用指导</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>药物相互作用风险提示</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>用药注意事项和副作用提醒</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- 功能4 -->
+                <div class="bg-white rounded-2xl p-8 shadow-soft card-hover">
+                    <div class="w-16 h-16 rounded-xl bg-warning/10 flex items-center justify-center mb-6">
+                        <i class="fa fa-heartbeat text-2xl text-warning"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-neutral-800">慢病管理</h3>
+                    <p class="text-neutral-600 mb-6">
+                        为高血压、糖尿病等慢性病患者提供日常管理指导和健康监测建议
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>慢性病日常管理知识普及</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>生活方式和饮食调整建议</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>用药依从性提醒和指导</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- 功能5 -->
+                <div class="bg-white rounded-2xl p-8 shadow-soft card-hover">
+                    <div class="w-16 h-16 rounded-xl bg-success/10 flex items-center justify-center mb-6">
+                        <i class="fa fa-book text-2xl text-success"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-neutral-800">医学科普</h3>
+                    <p class="text-neutral-600 mb-6">
+                        提供通俗易懂的医学知识普及，帮助用户了解疾病预防和健康管理
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>常见疾病的病因、症状和预防</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>季节性疾病预防知识</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>健康生活方式建议</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- 功能6 -->
+                <div class="bg-white rounded-2xl p-8 shadow-soft card-hover">
+                    <div class="w-16 h-16 rounded-xl bg-danger/10 flex items-center justify-center mb-6">
+                        <i class="fa fa-shield text-2xl text-danger"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4 text-neutral-800">安全与合规</h3>
+                    <p class="text-neutral-600 mb-6">
+                        严格遵守医疗信息安全和隐私保护规定，确保用户数据安全
+                    </p>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>用户隐私数据加密存储</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>符合医疗AI伦理规范</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-success mt-1 mr-3"></i>
+                            <span>明确提示AI辅助性质，建议必要时就医</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技术优势 -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-800 mb-4">
+                    技术优势
+                </h2>
+                <p class="text-neutral-600 text-lg">
+                    先进的医疗大语言模型技术，确保对话质量和专业性
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="mb-12">
+                        <div class="flex items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mr-6 flex-shrink-0">
+                                <i class="fa fa-neural-network text-2xl text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2 text-neutral-800">医疗大语言模型</h3>
+                                <p class="text-neutral-600">
+                                    基于大规模医学文献、临床指南和健康知识库训练的专业医疗语言模型，具备准确的医学知识和推理能力
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mr-6 flex-shrink-0">
+                                <i class="fa fa-database text-2xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2 text-neutral-800">多源医学知识融合</h3>
+                                <p class="text-neutral-600">
+                                    整合国内外权威医学指南、临床路径、医学教科书和最新研究成果，确保知识的全面性和权威性
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center mr-6 flex-shrink-0">
+                                <i class="fa fa-brain text-2xl text-tertiary"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2 text-neutral-800">意图理解与对话管理</h3>
+                                <p class="text-neutral-600">
+                                    先进的意图识别和对话管理技术，能够准确理解用户需求，引导对话流程，提供个性化的响应
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center mr-6 flex-shrink-0">
+                                <i class="fa fa-balance-scale text-2xl text-warning"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2 text-neutral-800">医疗安全性保障</h3>
+                                <p class="text-neutral-600">
+                                    多重安全机制，包括敏感问题识别、风险提示、边界设定等，确保AI回复的安全性和合规性
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="bg-white rounded-2xl shadow-soft p-8">
+                        <h3 class="text-xl font-semibold mb-6 text-neutral-800">性能指标</h3>
+                        <div class="space-y-8">
+                            <!-- 图表容器 -->
+                            <div class="h-80">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-6">
+                                <!-- 准确率指标 -->
+                                <div class="bg-neutral-50 p-6 rounded-xl">
+                                    <div class="text-4xl font-bold text-primary mb-2">98.3%</div>
+                                    <div class="text-neutral-600">医学知识准确率</div>
+                                </div>
+                                
+                                <!-- 响应时间指标 -->
+                                <div class="bg-neutral-50 p-6 rounded-xl">
+                                    <div class="text-4xl font-bold text-primary mb-2">&lt;500ms</div>
+                                    <div class="text-neutral-600">平均响应时间</div>
+                                </div>
+                                
+                                <!-- 覆盖疾病指标 -->
+                                <div class="bg-neutral-50 p-6 rounded-xl">
+                                    <div class="text-4xl font-bold text-primary mb-2">1000+</div>
+                                    <div class="text-neutral-600">覆盖疾病种类</div>
+                                </div>
+                                
+                                <!-- 满意度指标 -->
+                                <div class="bg-neutral-50 p-6 rounded-xl">
+                                    <div class="text-4xl font-bold text-primary mb-2">94.7%</div>
+                                    <div class="text-neutral-600">用户满意度</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 应用场景 -->
+    <section class="py-20 bg-neutral-100">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-800 mb-4">
+                    应用场景
+                </h2>
+                <p class="text-neutral-600 text-lg">
+                    在不同医疗场景中提供智能化的咨询和辅助服务
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 场景1 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://picsum.photos/id/96/800/500" alt="互联网医院在线咨询" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="text-sm font-medium text-primary mb-2">互联网医疗</div>
+                        <h3 class="text-xl font-semibold mb-4 text-neutral-800">互联网医院在线咨询</h3>
+                        <p class="text-neutral-600 mb-6">
+                            为互联网医院平台提供智能化前置问诊服务，初步筛选患者需求，减轻医生工作负担，提升诊疗效率
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full">在线问诊</span>
+                            <span class="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full">患者分流</span>
+                            <span class="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full">预问诊</span>
+                        </div>
+                        <div class="flex items-center text-primary font-medium hover:text-primary/80">
+                            了解更多 <i class="fa fa-long-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 场景2 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://picsum.photos/id/429/800/500" alt="医院智能导诊" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="text-sm font-medium text-secondary mb-2">智慧医院</div>
+                        <h3 class="text-xl font-semibold mb-4 text-neutral-800">医院智能导诊</h3>
+                        <p class="text-neutral-600 mb-6">
+                            在医院大厅、自助机或移动端部署智能导诊系统，帮助患者初步了解病情，推荐合适的科室和医生
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-secondary/10 text-secondary text-xs rounded-full">智能导诊</span>
+                            <span class="px-3 py-1 bg-secondary/10 text-secondary text-xs rounded-full">科室推荐</span>
+                            <span class="px-3 py-1 bg-secondary/10 text-secondary text-xs rounded-full">就医指导</span>
+                        </div>
+                        <div class="flex items-center text-primary font-medium hover:text-primary/80">
+                            了解更多 <i class="fa fa-long-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 场景3 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://picsum.photos/id/26/800/500" alt="慢病管理助手" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="text-sm font-medium text-tertiary mb-2">慢病管理</div>
+                        <h3 class="text-xl font-semibold mb-4 text-neutral-800">慢病管理助手</h3>
+                        <p class="text-neutral-600 mb-6">
+                            为高血压、糖尿病等慢性病患者提供日常管理指导、用药提醒、生活方式建议等，帮助患者更好地管理疾病
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-tertiary/10 text-tertiary text-xs rounded-full">用药提醒</span>
+                            <span class="px-3 py-1 bg-tertiary/10 text-tertiary text-xs rounded-full">健康监测</span>
+                            <span class="px-3 py-1 bg-tertiary/10 text-tertiary text-xs rounded-full">生活指导</span>
+                        </div>
+                        <div class="flex items-center text-primary font-medium hover:text-primary/80">
+                            了解更多 <i class="fa fa-long-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 场景4 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://picsum.photos/id/488/800/500" alt="企业健康管理" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="text-sm font-medium text-warning mb-2">健康管理</div>
+                        <h3 class="text-xl font-semibold mb-4 text-neutral-800">企业健康管理</h3>
+                        <p class="text-neutral-600 mb-6">
+                            为企业员工提供健康咨询、压力管理、职业病预防等服务，提升员工健康水平和工作效率
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-warning/10 text-warning text-xs rounded-full">健康咨询</span>
+                            <span class="px-3 py-1 bg-warning/10 text-warning text-xs rounded-full">压力管理</span>
+                            <span class="px-3 py-1 bg-warning/10 text-warning text-xs rounded-full">健康科普</span>
+                        </div>
+                        <div class="flex items-center text-primary font-medium hover:text-primary/80">
+                            了解更多 <i class="fa fa-long-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 接入指南 -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-800 mb-4">
+                    快速接入指南
+                </h2>
+                <p class="text-neutral-600 text-lg">
+                    简单几步，即可将智能问诊能力集成到您的系统
+                </p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-soft p-8 max-w-5xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- 步骤 1 -->
+                    <div class="text-center">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
+                        <h3 class="text-lg font-semibold mb-4 text-neutral-800">申请API密钥</h3>
+                        <p class="text-neutral-600">
+                            在开放平台注册账号，创建应用，获取API密钥和访问凭证
+                        </p>
+                    </div>
+                    
+                    <!-- 步骤 2 -->
+                    <div class="text-center">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
+                        <h3 class="text-lg font-semibold mb-4 text-neutral-800">集成SDK</h3>
+                        <p class="text-neutral-600">
+                            选择适合您技术栈的SDK，集成到您的应用或系统中
+                        </p>
+                    </div>
+                    
+                    <!-- 步骤 3 -->
+                    <div class="text-center">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
+                        <h3 class="text-lg font-semibold mb-4 text-neutral-800">配置对话参数</h3>
+                        <p class="text-neutral-600">
+                            根据您的场景需求，配置对话参数，如领域限定、风险提示等
+                        </p>
+                    </div>
+                    
+                    <!-- 步骤 4 -->
+                    <div class="text-center">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">4</div>
+                        <h3 class="text-lg font-semibold mb-4 text-neutral-800">上线使用</h3>
+                        <p class="text-neutral-600">
+                            部署应用，开始为用户提供智能问诊服务
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 代码示例 -->
+                <div class="mt-12">
+                    <h3 class="text-xl font-semibold mb-6 text-neutral-800">JavaScript SDK调用示例</h3>
+                    <div class="bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto font-mono text-sm">
+<pre>// 引入医疗AI SDK
+const MedicalAISDK = require('medical-ai-sdk');
+
+// 初始化SDK
+const medicalAI = new MedicalAISDK({
+    apiKey: 'your_api_key_here',
+    secret: 'your_secret_here'
+});
+
+// 创建对话会话
+async function createConversation() {
+    try {
+        const conversation = await medicalAI.chatbot.createConversation({
+            scenario: 'general_medical_consultation', // 对话场景
+            language: 'zh-CN', // 语言
+            userInfo: {
+                age: 30,
+                gender: 'male'
+            },
+            systemPrompt: '你是一位专业的医疗助手，请用简洁友好的语言回答用户的问题。'
+        });
+        
+        return conversation.sessionId;
+    } catch (error) {
+        console.error('创建对话失败:', error);
+        throw error;
+    }
+}
+
+// 发送消息并获取回复
+async function sendMessage(sessionId, message) {
+    try {
+        const response = await medicalAI.chatbot.sendMessage({
+            sessionId: sessionId,
+            message: message,
+            options: {
+                temperature: 0.7,
+                maxTokens: 1024
+            }
+        });
+        
+        return response;
+    } catch (error) {
+        console.error('发送消息失败:', error);
+        throw error;
+    }
+}
+
+// 使用示例
+async function example() {
+    const sessionId = await createConversation();
+    const response = await sendMessage(sessionId, '我最近总是感觉头痛，该怎么办？');
+    console.log('AI回复:', response.message);
+}</pre>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <a href="#api-docs" class="inline-flex items-center justify-center px-8 py-4 rounded-full bg-primary text-white font-medium text-lg hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg scale-hover">
+                        查看完整API文档 <i class="fa fa-external-link ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客户价值展示 -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-gray-800 mb-6">客户价值展示</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto text-lg">我们的智能问诊与对话能力已帮助众多医疗机构提升服务质量和效率，获得了用户的高度认可。</p>
+            </div>
+            
+            <!-- 价值卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div class="bg-white rounded-xl shadow-sm p-8 transition-all duration-300 hover:shadow-md border border-gray-100">
+                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-6">
+                        <i class="fa fa-bolt text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">效率提升85%</h3>
+                    <p class="text-gray-600">通过智能问诊预筛选，大幅减少医生接诊前的准备时间，提高门诊工作效率。</p>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-8 transition-all duration-300 hover:shadow-md border border-gray-100">
+                    <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-6">
+                        <i class="fa fa-check-circle text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">准确率98.3%</h3>
+                    <p class="text-gray-600">基于海量医学知识库训练，提供准确的初步评估和医疗建议，辅助临床决策。</p>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-8 transition-all duration-300 hover:shadow-md border border-gray-100">
+                    <div class="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mb-6">
+                        <i class="fa fa-users text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">用户满意度94.7%</h3>
+                    <p class="text-gray-600">7×24小时全天候服务，及时响应用户咨询，显著提升患者就医体验和满意度。</p>
+                </div>
+            </div>
+            
+            <!-- 客户评价 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl shadow-sm p-8 relative border border-gray-100">
+                    <div class="text-amber-400 text-2xl mb-4">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6">"智能问诊系统极大地减轻了我们的工作负担，让医生能够专注于更复杂的病例。系统的准确性令人印象深刻。"</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4">
+                            <img src="https://picsum.photos/id/1005/200/200" alt="用户头像" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">张医生</h4>
+                            <p class="text-gray-500 text-sm">三甲医院·内科主任</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-8 relative border border-gray-100">
+                    <div class="text-amber-400 text-2xl mb-4">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6">"作为一家社区医院，我们通过接入这套系统，显著提升了服务能力。患者满意度大幅提高，预约量也有明显增长。"</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4">
+                            <img src="https://picsum.photos/id/1012/200/200" alt="用户头像" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">李院长</h4>
+                            <p class="text-gray-500 text-sm">社区医院·院长</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-8 relative border border-gray-100">
+                    <div class="text-amber-400 text-2xl mb-4">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-half-o"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6">"24小时在线咨询服务让我们的用户随时随地都能获得专业帮助，大大增强了用户粘性和信任感。"</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden mr-4">
+                            <img src="https://picsum.photos/id/1027/200/200" alt="用户头像" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">王总监</h4>
+                            <p class="text-gray-500 text-sm">医疗科技公司·产品总监</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral-900 text-neutral-400 py-12">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center text-white">
+                            <i class="fa fa-heartbeat text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">医疗AI能力开放中心</span>
+                    </div>
+                    <p class="mb-6">
+                        连接医疗AI大模型与行业应用，为医、教、研、管各领域提供强大的智能解决方案
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-neutral-500 hover:text-white transition-colors">
+                            <i class="fa fa-weixin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-neutral-500 hover:text-white transition-colors">
+                            <i class="fa fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-neutral-500 hover:text-white transition-colors">
+                            <i class="fa fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-neutral-500 hover:text-white transition-colors">
+                            <i class="fa fa-github text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-medium mb-6">产品服务</h4>
+                    <ul class="space-y-4">
+                        <li><a href="text-analysis.html" class="hover:text-white transition-colors">医学文本分析</a></li>
+                        <li><a href="image-analysis.html" class="hover:text-white transition-colors">医学影像智能分析</a></li>
+                        <li><a href="chatbot.html" class="hover:text-white transition-colors">智能问诊与对话</a></li>
+                        <li><a href="research-assistant.html" class="hover:text-white transition-colors">医学科研助手</a></li>
+                        <li><a href="education.html" class="hover:text-white transition-colors">医学教育辅助</a></li>
+                        <li><a href="management.html" class="hover:text-white transition-colors">医疗管理决策支持</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-medium mb-6">资源中心</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#api-docs" class="hover:text-white transition-colors">API文档</a></li>
+                        <li><a href="#sdk-download" class="hover:text-white transition-colors">SDK下载</a></li>
+                        <li><a href="#dev-guide" class="hover:text-white transition-colors">开发指南</a></li>
+                        <li><a href="#best-practices" class="hover:text-white transition-colors">最佳实践</a></li>
+                        <li><a href="#case-studies" class="hover:text-white transition-colors">案例研究</a></li>
+                        <li><a href="#faq" class="hover:text-white transition-colors">常见问题</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-medium mb-6">关于我们</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#about" class="hover:text-white transition-colors">公司介绍</a></li>
+                        <li><a href="#team" class="hover:text-white transition-colors">团队成员</a></li>
+                        <li><a href="#partners" class="hover:text-white transition-colors">合作伙伴</a></li>
+                        <li><a href="#news" class="hover:text-white transition-colors">新闻动态</a></li>
+                        <li><a href="#join-us" class="hover:text-white transition-colors">加入我们</a></li>
+                        <li><a href="index.html#contact" class="hover:text-white transition-colors">联系我们</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-neutral-800 text-center">
+                <p class="mb-4">© 2023 医疗AI能力开放中心. 保留所有权利.</p>
+                <div class="flex justify-center space-x-6">
+                    <a href="#privacy" class="text-sm hover:text-white transition-colors">隐私政策</a>
+                    <a href="#terms" class="text-sm hover:text-white transition-colors">服务条款</a>
+                    <a href="#cookie" class="text-sm hover:text-white transition-colors">Cookie政策</a>
+                    <a href="#legal" class="text-sm hover:text-white transition-colors">法律声明</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-primary/90">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript -->
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-soft');
+            } else {
+                navbar.classList.remove('shadow-soft');
+            }
+        });
+        
+        // 移动端菜单切换
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    // 关闭移动端菜单
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+        
+        // 回到顶部按钮
+        const backToTopButton = document.getElementById('back-to-top');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 500) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+                backToTopButton.classList.remove('opacity-100', 'visible');
+            }
+        });
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 卡片悬停效果增强
+        const cards = document.querySelectorAll('.card-hover');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.12)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.08)';
+            });
+        });
+        
+        // 演示标签页切换
+        const demoTabs = document.querySelectorAll('.demo-tab');
+        const demoContents = document.querySelectorAll('.demo-content');
+        demoTabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // 移除所有标签页的活动状态
+                demoTabs.forEach(t => {
+                    t.classList.remove('active', 'text-primary', 'border-b-2', 'border-primary');
+                    t.classList.add('text-neutral-600');
+                });
+                
+                // 添加当前标签页的活动状态
+                this.classList.add('active', 'text-primary', 'border-b-2', 'border-primary');
+                this.classList.remove('text-neutral-600');
+                
+                // 隐藏所有内容
+                demoContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                // 显示当前内容
+                document.getElementById(tabId + '-demo').classList.remove('hidden');
+            });
+        });
+        
+        // 示例问题点击事件
+        const exampleQuestions = document.querySelectorAll('.example-question');
+        exampleQuestions.forEach(question => {
+            question.addEventListener('click', function() {
+                const activeTab = document.querySelector('.demo-tab.active').getAttribute('data-tab');
+                const inputField = document.getElementById(activeTab + '-input');
+                
+                if (inputField) {
+                    inputField.value = this.textContent;
+                    inputField.focus();
+                }
+            });
+        });
+        
+        // 症状咨询发送按钮
+        document.getElementById('symptom-send').addEventListener('click', function() {
+            const input = document.getElementById('symptom-input');
+            if (input.value.trim()) {
+                sendMessage(input.value, 'symptom-chat-container');
+                input.value = '';
+            }
+        });
+        
+        // 健康知识发送按钮
+        document.getElementById('knowledge-send').addEventListener('click', function() {
+            const input = document.getElementById('knowledge-input');
+            if (input.value.trim()) {
+                sendMessage(input.value, 'knowledge-chat-container');
+                input.value = '';
+            }
+        });
+        
+        // 报告解读发送按钮
+        document.getElementById('report-send').addEventListener('click', function() {
+            const input = document.getElementById('report-input');
+            if (input.value.trim()) {
+                sendMessage(input.value, 'report-chat-container');
+                input.value = '';
+            }
+        });
+        
+        // 按Enter键发送消息
+        document.querySelectorAll('#symptom-input, #knowledge-input, #report-input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    const activeTab = document.querySelector('.demo-tab.active').getAttribute('data-tab');
+                    const sendButton = document.getElementById(activeTab + '-send');
+                    if (sendButton) {
+                        sendButton.click();
+                    }
+                }
+            });
+        });
+        
+        // 发送消息函数
+        function sendMessage(message, containerId) {
+            const container = document.getElementById(containerId);
+            
+            // 添加用户消息
+            const userMessageHtml = `
+                <div class="flex items-start justify-end">
+                    <div class="bg-primary p-4 rounded-lg shadow-sm text-white chat-bubble-user max-w-[80%] mr-3">
+                        <p>${message}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-neutral-200 flex items-center justify-center flex-shrink-0">
+                        <i class="fa fa-user text-neutral-500"></i>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += userMessageHtml;
+            
+            // 添加加载状态
+            const loadingHtml = `
+                <div class="flex items-start loading-message">
+                    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-3 flex-shrink-0">
+                        <i class="fa fa-robot text-white"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm chat-bubble-bot max-w-[80%]">
+                        <div class="loader-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += loadingHtml;
+            
+            // 滚动到底部
+            container.scrollTop = container.scrollHeight;
+            
+            // 模拟AI回复
+            setTimeout(() => {
+                // 移除加载状态
+                const loadingMessage = container.querySelector('.loading-message');
+                if (loadingMessage) {
+                    loadingMessage.remove();
+                }
+                
+                // 添加AI回复
+                const botResponse = generateMockResponse(message, containerId);
+                const botMessageHtml = `
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center mr-3 flex-shrink-0">
+                            <i class="fa fa-robot text-white"></i>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm chat-bubble-bot max-w-[80%]">
+                            <p class="text-neutral-800">${botResponse}</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += botMessageHtml;
+                
+                // 滚动到底部
+                container.scrollTop = container.scrollHeight;
+            }, 1500);
+        }
+        
+        // 生成模拟回复
+        function generateMockResponse(message, containerId) {
+            let responses = [];
+            
+            if (containerId.includes('symptom')) {
+                responses = [
+                    "感谢您的描述。为了更好地了解您的情况，我想请问您的年龄、性别以及是否有其他伴随症状？",
+                    "根据您提供的信息，您的症状可能与多种因素有关。建议您保持良好的作息习惯，注意观察症状变化。如果症状持续或加重，请及时就医。",
+                    "您的情况需要进一步了解。请问这种症状已经持续多久了？是否有明显的诱因或缓解因素？"
+                ];
+            } else if (containerId.includes('knowledge')) {
+                responses = [
+                    "这是一个很好的问题。从医学角度来看，这个问题主要涉及以下几个方面...",
+                    "根据最新的医学研究，这种情况的常见原因包括...",
+                    "关于这个问题，我可以提供一些专业建议。首先...其次...最后..."
+                ];
+            } else if (containerId.includes('report')) {
+                responses = [
+                    "根据您提供的报告内容，我注意到以下几个关键点...总体来说，您的检查结果大部分指标在正常范围内，但有几项需要关注...",
+                    "分析您的报告，我发现部分指标出现了异常。建议您咨询相关专科医生，以便获得更详细的解释和针对性的建议。",
+                    "您的报告显示...这些变化可能与...有关。建议定期复查，并结合临床症状综合评估。"
+                ];
+            }
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        // 性能对比图表初始化
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['准确率', '响应速度', '专业性', '用户体验', '系统稳定性', '扩展性'],
+                datasets: [
+                    {
+                        label: '我们的系统',
+                        data: [94.5, 90, 95, 92.3, 99, 96],
+                        backgroundColor: 'rgba(22, 93, 255, 0.2)',
+                        borderColor: 'rgba(22, 93, 255, 0.8)',
+                        pointBackgroundColor: 'rgba(22, 93, 255, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(22, 93, 255, 1)'
+                    },
+                    {
+                        label: '行业平均水平',
+                        data: [82, 75, 80, 78, 88, 85],
+                        backgroundColor: 'rgba(107, 114, 128, 0.2)',
+                        borderColor: 'rgba(107, 114, 128, 0.8)',
+                        pointBackgroundColor: 'rgba(107, 114, 128, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(107, 114, 128, 1)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        ticks: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.r + '%';
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    duration: 2000,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+        
+        // 页面滚动动画
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('section > div > div, .card-hover');
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.2;
+                
+                if (elementPosition < screenPosition) {
+                    element.classList.add('animate-fade-in');
+                }
+            });
+        }
+        
+        // 初始触发一次动画检查
+        window.addEventListener('load', animateOnScroll);
+        // 滚动时触发动画检查
+        window.addEventListener('scroll', animateOnScroll);
+        
+        function addAIMessage(message) {
+            const aiMessageHTML = `
+                <div class="flex items-start mb-6">
+                    <div class="chat-avatar bg-primary">
+                        <i class="fa fa-robot"></i>
+                    </div>
+                    <div class="chat-bubble-ai">
+                        <p>${message}</p>
+                    </div>
+                </div>
+            `;
+            chatContainer.insertAdjacentHTML('beforeend', aiMessageHTML);
+            scrollToBottom();
+        }
+        
+        function getSimulatedResponse(userMessage) {
+            const responses = [
+                "感谢您的问题。为了能够提供更准确的建议，我需要了解更多细节。您能详细描述一下您的症状吗？",
+                "根据您的描述，这可能是一个常见问题，但也不能掉以轻心。建议您先观察几天，如果症状持续或加重，最好咨询专业医生。",
+                "您的情况我已了解。以下是一些建议：保持充足的休息，多喝水，注意饮食均衡。如果症状没有改善，建议及时就医。",
+                "对于您提到的问题，一般来说可以采取以下措施：1. 保持良好的生活习惯 2. 注意观察症状变化 3. 必要时咨询医生。如有紧急情况，请立即前往医院就诊。"
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        function scrollToBottom() {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 性能指标图表
+        const ctx2 = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart2 = new Chart(ctx2, {
+            type: 'radar',
+            data: {
+                labels: ['医学知识准确性', '自然语言理解', '多轮对话能力', '响应速度', '用户满意度', '安全合规性'],
+                datasets: [
+                    {
+                        label: '医疗AI助手',
+                        data: [98.3, 96.7, 94.5, 97.8, 94.7, 99.2],
+                        backgroundColor: 'rgba(22, 93, 255, 0.2)',
+                        borderColor: 'rgba(22, 93, 255, 1)',
+                        pointBackgroundColor: 'rgba(22, 93, 255, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(22, 93, 255, 1)'
+                    },
+                    {
+                        label: '普通聊天机器人',
+                        data: [72.1, 92.3, 85.6, 95.4, 78.9, 65.2],
+                        backgroundColor: 'rgba(201, 205, 212, 0.2)',
+                        borderColor: 'rgba(201, 205, 212, 1)',
+                        pointBackgroundColor: 'rgba(201, 205, 212, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(201, 205, 212, 1)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: true
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
