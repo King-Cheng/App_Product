@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医学影像智能分析 - 医疗AI能力开放中心</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0FC6C2',
+                        tertiary: '#722ED1',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        dark: '#1D2129',
+                        light: '#F2F3F5',
+                        'neutral-100': '#FFFFFF',
+                        'neutral-200': '#F7F8FA',
+                        'neutral-300': '#E5E6EB',
+                        'neutral-400': '#C9CDD4',
+                        'neutral-500': '#86909C',
+                        'neutral-600': '#4E5969',
+                        'neutral-700': '#272E3B',
+                        'neutral-800': '#1D2129',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 16px rgba(0, 0, 0, 0.08)',
+                        'medium': '0 8px 32px rgba(0, 0, 0, 0.12)',
+                        'strong': '0 16px 48px rgba(0, 0, 0, 0.16)',
+                    }
+                },
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #165DFF 0%, #0FC6C2 100%);
+            }
+            .bg-gradient-secondary {
+                background: linear-gradient(135deg, #722ED1 0%, #165DFF 100%);
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .scale-hover {
+                @apply hover:scale-105 transition-all duration-300;
+            }
+            .card-hover {
+                @apply hover:shadow-medium hover:-translate-y-1 transition-all duration-300;
+            }
+            .glass-effect {
+                @apply bg-white/80 backdrop-blur-md;
+            }
+            .code-block {
+                @apply bg-neutral-800 text-white p-4 rounded-lg overflow-x-auto font-mono text-sm;
+            }
+            .image-slider-dot {
+                @apply w-3 h-3 rounded-full bg-neutral-300 cursor-pointer transition-all duration-300;
+            }
+            .image-slider-dot.active {
+                @apply bg-primary w-8;
+            }
+            /* 价值卡片样式 */
+            .value-card {
+                @apply bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-neutral-100;
+            }
+            .value-icon {
+                @apply w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6;
+            }
+            /* 客户评价样式 */
+            .testimonial-card {
+                @apply bg-white p-8 rounded-2xl shadow-md border border-neutral-100;
+            }
+            .testimonial-avatar {
+                @apply w-12 h-12 rounded-full mr-4;
+            }
+            .star-rating {
+                @apply text-yellow-400 mb-4;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-neutral-200 text-neutral-800 overflow-x-hidden">
+    <!-- 导航栏 -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fa fa-heartbeat text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold text-neutral-dark">医疗AI开放平台</span>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-neutral-dark hover:text-primary transition-custom">首页</a>
+                <div class="relative group">
+                    <a href="#" class="text-primary font-medium flex items-center space-x-1">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute left-0 mt-2 w-64 bg-white shadow-lg rounded-lg overflow-hidden z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform -translate-y-2 group-hover:translate-y-0">
+                        <a href="text-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学文本分析</a>
+                        <a href="image-analysis.html" class="block px-4 py-3 bg-primary/10 text-primary">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block px-4 py-3 hover:bg-neutral-light">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block px-4 py-3 hover:bg-neutral-light">医学科研助手</a>
+                        <a href="education.html" class="block px-4 py-3 hover:bg-neutral-light">医学教育辅助</a>
+                        <a href="management-decision.html" class="block px-4 py-3 hover:bg-neutral-light">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="text-neutral-dark hover:text-primary transition-custom">解决方案</a>
+                <a href="api-docs.html" class="text-neutral-dark hover:text-primary transition-custom">接口开发</a>
+                <a href="news.html" class="text-neutral-dark hover:text-primary transition-custom">新闻动态</a>
+                    <a href="ai-results-dashboard.html" class="text-neutral-dark hover:text-primary transition-custom">统计面板</a>
+                <a href="about.html" class="text-neutral-dark hover:text-primary transition-custom">关于我们</a>
+            </nav>
+            
+            <!-- 按钮组 -->
+            <div class="flex items-center space-x-4">
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-button" class="md:hidden text-neutral-dark">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="index.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">首页</a>
+                <div class="relative">
+                    <button class="flex items-center justify-between w-full py-2 px-4 hover:bg-neutral-light rounded-lg">
+                        <span class="text-primary font-medium">核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </button>
+                    <div class="pl-4 mt-2 space-y-2 border-l-2 border-primary">
+                        <a href="text-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学文本分析</a>
+                        <a href="image-analysis.html" class="block py-2 bg-primary/10 text-primary rounded-lg">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block py-2 hover:bg-neutral-light rounded-lg">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学科研助手</a>
+                        <a href="education.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学教育辅助</a>
+                        <a href="management-decision.html" class="block py-2 hover:bg-neutral-light rounded-lg">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">解决方案</a>
+                <a href="api-docs.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">接口开发</a>
+                <a href="news.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">新闻动态</a>
+                <a href="ai-results-dashboard.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">统计面板</a>
+                <a href="about.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 页面标题区域 -->
+    <section class="pt-32 pb-16 bg-gradient-to-b from-primary/5 to-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex items-center mb-4">
+                    <a href="index.html#features" class="text-neutral-600 hover:text-primary transition-colors mr-2">
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                    <span class="text-neutral-600">返回核心能力</span>
+                </div>
+                <h1 class="text-[clamp(2rem,4vw,3rem)] font-bold leading-tight text-neutral-800 mb-6">
+                    医学影像智能分析
+                </h1>
+                <p class="text-[clamp(1rem,2vw,1.25rem)] text-neutral-600 mb-8 max-w-3xl">
+                    基于深度学习的医学影像识别与分析技术，提供精准的病灶检测、分割和定量分析，辅助医生提高诊断准确性和效率
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <span class="px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">CT影像分析</span>
+                    <span class="px-4 py-1 bg-secondary/10 text-secondary rounded-full text-sm font-medium">MRI影像分析</span>
+                    <span class="px-4 py-1 bg-tertiary/10 text-tertiary rounded-full text-sm font-medium">X光影像分析</span>
+                    <span class="px-4 py-1 bg-warning/10 text-warning rounded-full text-sm font-medium">超声影像分析</span>
+                    <span class="px-4 py-1 bg-success/10 text-success rounded-full text-sm font-medium">病理切片分析</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 影像分析演示 -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-800 mb-4">
+                    医学影像智能分析演示
+                </h2>
+                <p class="text-neutral-600 text-lg">
+                    通过深度学习算法，自动检测和标记医学影像中的异常区域
+                </p>
+            </div>
+            
+            <div class="bg-neutral-100 rounded-2xl shadow-soft p-8 max-w-5xl mx-auto">
+                <!-- 影像类型选择 -->
+                <div class="flex flex-wrap gap-4 mb-8">
+                    <button class="image-type-btn px-5 py-3 rounded-full bg-primary text-white font-medium">CT影像</button>
+                    <button class="image-type-btn px-5 py-3 rounded-full bg-white text-neutral-600 font-medium hover:bg-neutral-200">MRI影像</button>
+                    <button class="image-type-btn px-5 py-3 rounded-full bg-white text-neutral-600 font-medium hover:bg-neutral-200">X光影像</button>
+                    <button class="image-type-btn px-5 py-3 rounded-full bg-white text-neutral-600 font-medium hover:bg-neutral-200">超声影像</button>
+                </div>
+                
+                <!-- 影像对比展示 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- 原始影像 -->
+                    <div>
+                        <h3 class="text-lg font-medium text-neutral-800 mb-4">原始影像</h3>
+                        <div class="rounded-xl overflow-hidden shadow-sm border border-neutral-300">
+                            <img src="https://picsum.photos/id/237/600/600" alt="原始CT影像" class="w-full h-auto object-cover">
+                        </div>
+                    </div>
+                    
+                    <!-- AI分析结果 -->
+                    <div>
+                        <h3 class="text-lg font-medium text-neutral-800 mb-4">AI分析结果</h3>
+                        <div class="rounded-xl overflow-hidden shadow-sm border border-neutral-300 relative">
+                            <img src="https://picsum.photos/id/237/600/600" alt="AI分析后的CT影像" class="w-full h-auto object-cover">
+                            <!-- 模拟标注区域 -->
+                            <div class="absolute top-1/4 left-1/4 w-32 h-32 border-2 border-danger rounded-lg opacity-70" style="transform: translate(-50%, -50%);"></div>
+                            <div class="absolute bottom-1/4 right-1/4 w-24 h-24 border-2 border-warning rounded-lg opacity-70" style="transform: translate(50%, 50%);"></div>
+                            <!-- 标注说明 -->
+                            <div class="absolute bottom-4 left-4 bg-white/90 p-3 rounded-lg shadow-md">
+                                <div class="flex items-center mb-2">
+                                    <div class="w-3 h-3 rounded-full bg-danger mr-2"></div>
+                                    <span class="text-sm font-medium text-neutral-800">疑似病灶区域 (置信度: 94%)</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-warning mr-2"></div>
+                                    <span class="text-sm font-medium text-neutral-800">异常密度区 (置信度: 87%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 分析指标 -->
+                <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <div class="text-neutral-500 text-sm mb-1">检测到的病灶数量</div>
+                        <div class="text-2xl font-bold text-primary">2</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <div class="text-neutral-500 text-sm mb-1">最大病灶尺寸</div>
+                        <div class="text-2xl font-bold text-primary">1.8cm × 2.3cm</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <div class="text-neutral-500 text-sm mb-1">分析置信度</div>
+                        <div class="text-2xl font-bold text-primary">94.3%</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <div class="text-neutral-500 text-sm mb-1">分析用时</div>
+                        <div class="text-2xl font-bold text-primary">0.8秒</div>
+                    </div>
+                </div>
+                
+                <!-- 分析报告摘要 -->
+                <div class="mt-8 bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-medium text-neutral-800 mb-4">分析报告摘要</h3>
+                    <p class="text-neutral-600 mb-4">
+                        在右肺上叶检测到一个直径约1.8cm×2.3cm的结节，边缘不规则，密度不均，考虑恶性可能（置信度94%）。
+                        同时在左肺下叶发现一个直径约1.2cm的磨玻璃密度影，性质待定（置信度87%）。
+                        建议进行进一步检查或随访观察。
+                    </p>
+                    <button class="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                        生成完整报告 <i class="fa fa-file-text-o ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 支持的影像类型 -->
+    <section class="py-20 bg-neutral-100">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-800 mb-4">
+                    支持的影像类型
+                </h2>
+                <p class="text-neutral-600 text-lg">
+                    覆盖多种医学影像模态，提供全面的智能分析能力
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- CT影像分析 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/id/433/600/400" alt="CT影像分析" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mr-4">
+                                <i class="fa fa-heartbeat text-2xl text-primary"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-neutral-800">CT影像分析</h3>
+                        </div>
+                        <p class="text-neutral-600 mb-6">
+                            高精度检测和分割肺结节、肝脏病变、胰腺病灶等，提供定量分析和风险评估
+                        </p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>肺结节检测与良恶性判断</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>肝脏肿瘤分割与分期</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>冠状动脉钙化积分分析</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- MRI影像分析 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/id/497/600/400" alt="MRI影像分析" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mr-4">
+                                <i class="fa fa-brain text-2xl text-secondary"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-neutral-800">MRI影像分析</h3>
+                        </div>
+                        <p class="text-neutral-600 mb-6">
+                            对脑部、脊柱、关节等MRI影像进行智能分析，辅助神经系统疾病和骨骼疾病的诊断
+                        </p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>脑肿瘤分割与分级</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>脑白质病变定量分析</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>关节软骨损伤评估</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- X光影像分析 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/id/48/600/400" alt="X光影像分析" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center mr-4">
+                                <i class="fa fa-x-ray text-2xl text-tertiary"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-neutral-800">X光影像分析</h3>
+                        </div>
+                        <p class="text-neutral-600 mb-6">
+                            快速筛查胸部X光片，检测肺炎、肺结核、骨折等常见病变，提高基层医疗机构诊断能力
+                        </p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>肺炎和肺部感染检测</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>胸部X光片结核筛查</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>骨骼骨折检测与定位</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 超声影像分析 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/id/20/600/400" alt="超声影像分析" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center mr-4">
+                                <i class="fa fa-baby text-2xl text-warning"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-neutral-800">超声影像分析</h3>
+                        </div>
+                        <p class="text-neutral-600 mb-6">
+                            辅助分析甲状腺、乳腺、肝脏等超声图像，自动测量相关指标，提高超声诊断一致性
+                        </p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>甲状腺结节良恶性鉴别</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>乳腺肿块BI-RADS分类</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>胎儿生长参数测量</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 病理切片分析 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/id/366/600/400" alt="病理切片分析" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center mr-4">
+                                <i class="fa fa-microscope text-2xl text-success"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-neutral-800">病理切片分析</h3>
+                        </div>
+                        <p class="text-neutral-600 mb-6">
+                            对数字化病理切片进行分析，识别肿瘤细胞和组织学特征，辅助病理诊断和预后评估
+                        </p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>肿瘤区域自动识别</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>免疫组化染色定量分析</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>病理分型辅助诊断</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 眼底影像分析 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://picsum.photos/id/684/600/400" alt="眼底影像分析" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-danger/10 flex items-center justify-center mr-4">
+                                <i class="fa fa-eye text-2xl text-danger"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-neutral-800">眼底影像分析</h3>
+                        </div>
+                        <p class="text-neutral-600 mb-6">
+                            分析眼底彩照，检测糖尿病视网膜病变、青光眼等眼科疾病，支持大规模筛查
+                        </p>
+                        <ul class="space-y-2">
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>糖尿病视网膜病变分级</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>青光眼视神经乳头分析</span>
+                            </li>
+                            <li class="flex items-center text-neutral-700">
+                                <i class="fa fa-check-circle text-success mr-2"></i>
+                                <span>黄斑病变检测</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技术优势 -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-800 mb-4">
+                    技术优势
+                </h2>
+                <p class="text-neutral-600 text-lg">
+                    领先的深度学习技术，确保影像分析的准确性和可靠性
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="mb-12">
+                        <div class="flex items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mr-6 flex-shrink-0">
+                                <i class="fa fa-neural-network text-2xl text-primary"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2 text-neutral-800">先进的深度学习算法</h3>
+                                <p class="text-neutral-600">
+                                    采用先进的深度学习架构，包括多尺度特征融合、注意力机制等技术，实现高精度的病变检测和分割
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mr-6 flex-shrink-0">
+                                <i class="fa fa-database text-2xl text-secondary"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2 text-neutral-800">海量医学影像数据</h3>
+                                <p class="text-neutral-600">
+                                    基于大规模标注医学影像数据集训练，涵盖多种疾病类型和影像模态，确保模型的泛化能力
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start mb-6">
+                            <div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center mr-6 flex-shrink-0">
+                                <i class="fa fa-robot text-2xl text-tertiary"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2 text-neutral-800">多模态融合分析</h3>
+                                <p class="text-neutral-600">
+                                    支持多模态医学影像融合分析，结合不同影像类型的优势，提供更全面的诊断信息
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 rounded-xl bg-warning/10 flex items-center justify-center mr-6 flex-shrink-0">
+                                <i class="fa fa-tachometer text-2xl text-warning"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2 text-neutral-800">高效推理引擎</h3>
+                                <p class="text-neutral-600">
+                                    针对医学影像处理优化的推理引擎，支持GPU加速，单张影像分析时间小于1秒
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="bg-white rounded-2xl shadow-soft p-8">
+                        <h3 class="text-xl font-semibold mb-6 text-neutral-800">性能指标对比</h3>
+                        <div class="space-y-8">
+                            <!-- 图表容器 -->
+                            <div class="h-80">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <!-- 准确率指标 -->
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="font-medium text-neutral-800">平均检测准确率</span>
+                                        <span class="font-medium text-primary">96.7%</span>
+                                    </div>
+                                    <div class="w-full bg-neutral-200 rounded-full h-3">
+                                        <div class="bg-primary h-3 rounded-full" style="width: 96.7%"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 灵敏度指标 -->
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="font-medium text-neutral-800">灵敏度</span>
+                                        <span class="font-medium text-primary">95.2%</span>
+                                    </div>
+                                    <div class="w-full bg-neutral-200 rounded-full h-3">
+                                        <div class="bg-primary h-3 rounded-full" style="width: 95.2%"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 特异度指标 -->
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="font-medium text-neutral-800">特异度</span>
+                                        <span class="font-medium text-primary">97.1%</span>
+                                    </div>
+                                    <div class="w-full bg-neutral-200 rounded-full h-3">
+                                        <div class="bg-primary h-3 rounded-full" style="width: 97.1%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 临床应用案例 -->
+    <section class="py-20 bg-neutral-100">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-800 mb-4">
+                    临床应用案例
+                </h2>
+                <p class="text-neutral-600 text-lg">
+                    在多家三甲医院的实际应用，显著提升诊断效率和准确性
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- 案例 1 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://picsum.photos/id/231/800/500" alt="肺癌早期筛查项目" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="text-sm font-medium text-primary mb-2">胸部影像</div>
+                        <h3 class="text-xl font-semibold mb-3 text-neutral-800">肺癌早期筛查项目</h3>
+                        <p class="text-neutral-600 mb-6">
+                            与某省癌症中心合作开展肺癌早期筛查项目，覆盖10万+高危人群，AI辅助筛查将早期肺癌检出率提升40%，筛查效率提升3倍
+                        </p>
+                        <div class="flex items-center text-primary font-medium hover:text-primary/80">
+                            查看详情 <i class="fa fa-long-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 案例 2 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://picsum.photos/id/325/800/500" alt="脑卒中影像快速评估系统" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="text-sm font-medium text-secondary mb-2">神经影像</div>
+                        <h3 class="text-xl font-semibold mb-3 text-neutral-800">脑卒中影像快速评估系统</h3>
+                        <p class="text-neutral-600 mb-6">
+                            为多家三甲医院急诊科部署脑卒中影像快速评估系统，将影像分析时间从平均20分钟缩短至1分钟以内，显著提升脑卒中救治效率
+                        </p>
+                        <div class="flex items-center text-primary font-medium hover:text-primary/80">
+                            查看详情 <i class="fa fa-long-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 案例 3 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://picsum.photos/id/335/800/500" alt="糖尿病视网膜病变筛查" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="text-sm font-medium text-tertiary mb-2">眼科影像</div>
+                        <h3 class="text-xl font-semibold mb-3 text-neutral-800">糖尿病视网膜病变筛查</h3>
+                        <p class="text-neutral-600 mb-6">
+                            与多家社区医院合作开展糖尿病视网膜病变筛查项目，AI辅助筛查准确率达94%以上，筛查效率提升5倍，大幅提高了基层筛查覆盖率
+                        </p>
+                        <div class="flex items-center text-primary font-medium hover:text-primary/80">
+                            查看详情 <i class="fa fa-long-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 案例 4 -->
+                <div class="bg-white rounded-2xl overflow-hidden shadow-soft card-hover">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://picsum.photos/id/43/800/500" alt="智能病理辅助诊断系统" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-8">
+                        <div class="text-sm font-medium text-warning mb-2">病理影像</div>
+                        <h3 class="text-xl font-semibold mb-3 text-neutral-800">智能病理辅助诊断系统</h3>
+                        <p class="text-neutral-600 mb-6">
+                            为多家三甲医院病理科部署智能病理辅助诊断系统，将病理切片初筛时间缩短60%，同时提高了罕见病例和交界性病变的检出率
+                        </p>
+                        <div class="flex items-center text-primary font-medium hover:text-primary/80">
+                            查看详情 <i class="fa fa-long-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 接入指南 -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-neutral-800 mb-4">
+                    快速接入指南
+                </h2>
+                <p class="text-neutral-600 text-lg">
+                    简单几步，即可将医学影像智能分析能力集成到您的系统
+                </p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-soft p-8 max-w-5xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <!-- 步骤 1 -->
+                    <div class="text-center">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">1</div>
+                        <h3 class="text-lg font-semibold mb-4 text-neutral-800">申请API密钥</h3>
+                        <p class="text-neutral-600">
+                            在开放平台注册账号，创建应用，获取API密钥和访问凭证
+                        </p>
+                    </div>
+                    
+                    <!-- 步骤 2 -->
+                    <div class="text-center">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">2</div>
+                        <h3 class="text-lg font-semibold mb-4 text-neutral-800">影像预处理</h3>
+                        <p class="text-neutral-600">
+                            按照API要求准备医学影像数据，支持多种常见医学影像格式
+                        </p>
+                    </div>
+                    
+                    <!-- 步骤 3 -->
+                    <div class="text-center">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">3</div>
+                        <h3 class="text-lg font-semibold mb-4 text-neutral-800">调用API分析</h3>
+                        <p class="text-neutral-600">
+                            调用影像分析API，上传影像并获取分析结果，支持同步和异步两种模式
+                        </p>
+                    </div>
+                    
+                    <!-- 步骤 4 -->
+                    <div class="text-center">
+                        <div class="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mx-auto mb-6">4</div>
+                        <h3 class="text-lg font-semibold mb-4 text-neutral-800">结果集成展示</h3>
+                        <p class="text-neutral-600">
+                            将分析结果集成到您的系统中，可选择直接使用或进一步处理
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 代码示例 -->
+                <div class="mt-12">
+                    <h3 class="text-xl font-semibold mb-6 text-neutral-800">Python SDK调用示例</h3>
+                    <div class="code-block">
+<pre># 引入医疗AI SDK
+from medical_ai_sdk import MedicalAISDK
+
+# 初始化SDK
+medical_ai = MedicalAISDK(
+    api_key='your_api_key_here',
+    secret='your_secret_here'
+)
+
+# 调用医学影像分析API
+def analyze_medical_image(image_path):
+    try:
+        # 支持的影像类型: 'ct', 'mri', 'xray', 'ultrasound', 'pathology', 'fundus'
+        result = medical_ai.image_analysis.analyze(
+            image_path=image_path,
+            image_type='ct',
+            task_type='lung_nodule_detection'
+        )
+        
+        print('分析结果:', result)
+        return result
+    except Exception as e:
+        print('API调用失败:', str(e))
+        raise
+
+# 调用示例
+result = analyze_medical_image('/path/to/ct_scan.jpg')</pre>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <a href="#api-docs" class="inline-flex items-center justify-center px-8 py-4 rounded-full bg-primary text-white font-medium text-lg hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg scale-hover">
+                        查看完整API文档 <i class="fa fa-external-link ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客户价值展示 -->
+    <section class="py-20 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center mb-16">
+                <span class="text-sm font-medium text-primary px-3 py-1 rounded-full bg-primary/10">客户价值</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-4 mb-4">医学影像分析为客户创造的价值</h2>
+                <p class="text-neutral-600 max-w-2xl mx-auto">我们的医学影像智能分析能力已帮助数百家医疗机构提升了诊断效率、准确率和患者服务质量。</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <!-- 价值卡片1 -->
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-neutral-100">
+                    <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
+                        <i class="fa fa-tachometer text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">效率提升</h3>
+                    <p class="text-neutral-600 mb-4">影像分析速度提升85%，医生可同时处理更多病例，大幅减少患者等待时间。</p>
+                    <div class="flex items-end space-x-2">
+                        <span class="text-2xl font-bold text-primary">85%</span>
+                        <span class="text-neutral-500 mb-1">分析效率提升</span>
+                    </div>
+                </div>
+                
+                <!-- 价值卡片2 -->
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-neutral-100">
+                    <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
+                        <i class="fa fa-stethoscope text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">准确率提高</h3>
+                    <p class="text-neutral-600 mb-4">早期病变检出率提高76%，特别是肺结节、微骨折等微小病变的识别能力显著增强。</p>
+                    <div class="flex items-end space-x-2">
+                        <span class="text-2xl font-bold text-primary">96.7%</span>
+                        <span class="text-neutral-500 mb-1">诊断准确率</span>
+                    </div>
+                </div>
+                
+                <!-- 价值卡片3 -->
+                <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 border border-neutral-100">
+                    <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
+                        <i class="fa fa-money text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">成本降低</h3>
+                    <p class="text-neutral-600 mb-4">通过智能初筛减少不必要的检查，平均为医疗机构节省35%的运营支出。</p>
+                    <div class="flex items-end space-x-2">
+                        <span class="text-2xl font-bold text-primary">35%</span>
+                        <span class="text-neutral-500 mb-1">成本降低</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 客户评价概览 -->
+            <div class="bg-neutral-50 rounded-2xl p-8 md:p-10">
+                <h3 class="text-2xl font-bold text-center mb-10">客户使用反馈</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- 评价1 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md transition-all duration-300 hover:shadow-lg">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+                                <img src="https://picsum.photos/200/200?random=7" alt="医院代表" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-neutral-900">刘医生</h4>
+                                <p class="text-sm text-neutral-500">某三甲医院放射科</p>
+                            </div>
+                        </div>
+                        <p class="text-neutral-700 mb-4">"AI辅助诊断系统大大提高了我的工作效率，尤其是在肺结节检测方面，能够发现我可能忽略的微小病变，已经帮助我们提前发现了多例早期肺癌。"</p>
+                        <div class="flex text-warning">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- 评价2 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md transition-all duration-300 hover:shadow-lg">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+                                <img src="https://picsum.photos/200/200?random=8" alt="医院代表" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-neutral-900">张主任</h4>
+                                <p class="text-sm text-neutral-500">某肿瘤医院影像科主任</p>
+                            </div>
+                        </div>
+                        <p class="text-neutral-700 mb-4">"系统的肿瘤分割和定量分析功能非常强大，为我们的精准治疗提供了可靠的数据支持。AI与医生的结合让诊断水平提升到了新的高度。"</p>
+                        <div class="flex text-warning">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star-half-o"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- 评价3 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md transition-all duration-300 hover:shadow-lg">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+                                <img src="https://picsum.photos/200/200?random=9" alt="医院代表" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-neutral-900">陈院长</h4>
+                                <p class="text-sm text-neutral-500">某综合医院院长</p>
+                            </div>
+                        </div>
+                        <p class="text-neutral-700 mb-4">"引入医学影像AI分析系统后，我们医院的影像科诊断效率提升了一倍多，患者满意度显著提高，同时也吸引了更多的患者前来就诊。"</p>
+                        <div class="flex text-warning">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral-900 text-neutral-400 py-12">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center text-white">
+                            <i class="fa fa-heartbeat text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">医疗AI能力开放中心</span>
+                    </div>
+                    <p class="mb-6">
+                        连接医疗AI大模型与行业应用，为医、教、研、管各领域提供强大的智能解决方案
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-neutral-500 hover:text-white transition-colors">
+                            <i class="fa fa-weixin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-neutral-500 hover:text-white transition-colors">
+                            <i class="fa fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-neutral-500 hover:text-white transition-colors">
+                            <i class="fa fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-neutral-500 hover:text-white transition-colors">
+                            <i class="fa fa-github text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-medium mb-6">产品服务</h4>
+                    <ul class="space-y-4">
+                        <li><a href="text-analysis.html" class="hover:text-white transition-colors">医学文本分析</a></li>
+                        <li><a href="image-analysis.html" class="hover:text-white transition-colors">医学影像智能分析</a></li>
+                        <li><a href="chatbot.html" class="hover:text-white transition-colors">智能问诊与对话</a></li>
+                        <li><a href="research-assistant.html" class="hover:text-white transition-colors">医学科研助手</a></li>
+                        <li><a href="education.html" class="hover:text-white transition-colors">医学教育辅助</a></li>
+                        <li><a href="management.html" class="hover:text-white transition-colors">医疗管理决策支持</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-medium mb-6">资源中心</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#api-docs" class="hover:text-white transition-colors">API文档</a></li>
+                        <li><a href="#sdk-download" class="hover:text-white transition-colors">SDK下载</a></li>
+                        <li><a href="#dev-guide" class="hover:text-white transition-colors">开发指南</a></li>
+                        <li><a href="#best-practices" class="hover:text-white transition-colors">最佳实践</a></li>
+                        <li><a href="#case-studies" class="hover:text-white transition-colors">案例研究</a></li>
+                        <li><a href="#faq" class="hover:text-white transition-colors">常见问题</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white font-medium mb-6">关于我们</h4>
+                    <ul class="space-y-4">
+                        <li><a href="#about" class="hover:text-white transition-colors">公司介绍</a></li>
+                        <li><a href="#team" class="hover:text-white transition-colors">团队成员</a></li>
+                        <li><a href="#partners" class="hover:text-white transition-colors">合作伙伴</a></li>
+                        <li><a href="#news" class="hover:text-white transition-colors">新闻动态</a></li>
+                        <li><a href="#join-us" class="hover:text-white transition-colors">加入我们</a></li>
+                        <li><a href="index.html#contact" class="hover:text-white transition-colors">联系我们</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-neutral-800 text-center">
+                <p class="mb-4">© 2023 医疗AI能力开放中心. 保留所有权利.</p>
+                <div class="flex justify-center space-x-6">
+                    <a href="#privacy" class="text-sm hover:text-white transition-colors">隐私政策</a>
+                    <a href="#terms" class="text-sm hover:text-white transition-colors">服务条款</a>
+                    <a href="#cookie" class="text-sm hover:text-white transition-colors">Cookie政策</a>
+                    <a href="#legal" class="text-sm hover:text-white transition-colors">法律声明</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-primary/90">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript -->
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-soft');
+            } else {
+                navbar.classList.remove('shadow-soft');
+            }
+        });
+        
+        // 移动端菜单切换
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    // 关闭移动端菜单
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+        
+        // 回到顶部按钮
+        const backToTopButton = document.getElementById('back-to-top');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 500) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+                backToTopButton.classList.remove('opacity-100', 'visible');
+            }
+        });
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 卡片悬停效果增强
+        const cards = document.querySelectorAll('.card-hover');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.12)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.08)';
+            });
+        });
+        
+        // 影像类型切换
+        const imageTypeBtns = document.querySelectorAll('.image-type-btn');
+        imageTypeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                imageTypeBtns.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-white');
+                    b.classList.add('bg-white', 'text-neutral-600');
+                });
+                this.classList.remove('bg-white', 'text-neutral-600');
+                this.classList.add('bg-primary', 'text-white');
+            });
+        });
+        
+        // 性能对比图表
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['肺结节检测', '肝脏肿瘤分割', '脑肿瘤分析', '骨折检测', '眼底病变筛查'],
+                datasets: [
+                    {
+                        label: 'AI辅助诊断准确率',
+                        data: [96.7, 95.2, 94.5, 97.3, 93.8],
+                        backgroundColor: '#165DFF',
+                        borderRadius: 4
+                    },
+                    {
+                        label: '传统人工诊断准确率',
+                        data: [89.2, 87.5, 88.1, 90.3, 86.7],
+                        backgroundColor: '#C9CDD4',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                // 添加动画效果
+                animation: {
+                    duration: 2000,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+        
+        // 演示标签页切换
+        const demoTabs = document.querySelectorAll('.demo-tab');
+        const demoContents = document.querySelectorAll('.demo-content');
+        
+        if (demoTabs.length > 0 && demoContents.length > 0) {
+            demoTabs.forEach((tab, index) => {
+                tab.addEventListener('click', function() {
+                    // 隐藏所有内容
+                    demoContents.forEach(content => content.classList.add('hidden'));
+                    // 显示对应内容
+                    demoContents[index].classList.remove('hidden');
+                    
+                    // 更新标签样式
+                    demoTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+        
+        // 示例影像按钮点击事件
+        const exampleImageBtns = document.querySelectorAll('.example-image-btn');
+        const previewImage = document.querySelector('.preview-image');
+        
+        if (exampleImageBtns.length > 0 && previewImage) {
+            exampleImageBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 添加加载效果
+                    previewImage.style.opacity = '0.5';
+                    previewImage.style.filter = 'grayscale(50%)';
+                    
+                    // 模拟加载延迟
+                    setTimeout(() => {
+                        // 这里应该根据实际需求更换图片
+                        // 为了演示，我们只是改变透明度和滤镜
+                        previewImage.style.opacity = '1';
+                        previewImage.style.filter = 'grayscale(0%)';
+                    }, 800);
+                });
+            });
+        }
+        
+        // 分析按钮点击事件
+        const analyzeBtn = document.getElementById('analyze-button');
+        const analysisResults = document.querySelector('.analysis-results');
+        
+        if (analyzeBtn && analysisResults) {
+            analyzeBtn.addEventListener('click', function() {
+                // 显示加载状态
+                this.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 分析中...';
+                this.disabled = true;
+                
+                // 模拟分析过程
+                setTimeout(() => {
+                    // 显示分析结果（如果之前是隐藏的）
+                    if (analysisResults.classList.contains('hidden')) {
+                        analysisResults.classList.remove('hidden');
+                    }
+                    
+                    // 添加结果显示动画
+                    analysisResults.style.opacity = '0';
+                    analysisResults.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        analysisResults.style.opacity = '1';
+                        analysisResults.style.transform = 'translateY(0)';
+                        analysisResults.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    }, 10);
+                    
+                    // 恢复按钮状态
+                    this.innerHTML = '重新分析';
+                    this.disabled = false;
+                }, 2000);
+            });
+        }
+        
+        // 表单提交处理代码已移除，替换为客户价值展示内容
+        
+        // 滚动动画效果
+        function handleScrollAnimations() {
+            const animatedElements = document.querySelectorAll('.card-hover, section > div > div.text-center');
+            
+            animatedElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementBottom = element.getBoundingClientRect().bottom;
+                const isVisible = elementTop < window.innerHeight - 100 && elementBottom > 0;
+                
+                if (isVisible) {
+                    element.classList.add('animate-fade-in');
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        }
+        
+        // 初始化动画元素
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.card-hover, section > div > div.text-center');
+            
+            animatedElements.forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(30px)';
+                element.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            });
+            
+            // 初始检查可见元素
+            handleScrollAnimations();
+        });
+        
+        // 滚动时检查元素可见性
+        window.addEventListener('scroll', handleScrollAnimations);
+        
+        // 窗口大小变化时重新检查可见元素
+        window.addEventListener('resize', handleScrollAnimations);
+    </script>
+</body>
+</html>

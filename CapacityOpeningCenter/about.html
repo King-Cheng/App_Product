@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们 - 医疗AI能力开放中心</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- 配置Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0FC6C2',
+                        accent: '#722ED1',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        neutral: '#86909C',
+                        'neutral-light': '#F2F3F5',
+                        'neutral-dark': '#4E5969'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+            .hover-lift {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .hover-lift:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(22, 93, 255, 0.1);
+            }
+            .timeline-item {
+                @apply relative pl-8 pb-8;
+            }
+            .timeline-item::before {
+                content: '';
+                @apply absolute left-0 top-2 w-2 h-2 rounded-full bg-primary;
+            }
+            .timeline-item:not(:last-child)::after {
+                content: '';
+                @apply absolute left-0 top-4 bottom-0 w-px bg-primary/20;
+            }
+            .team-card {
+                @apply bg-white rounded-xl border border-gray-200 overflow-hidden hover-lift transition-custom;
+            }
+            
+            /* 价值卡片样式 */
+            .value-card {
+                background-color: white;
+                border-radius: 16px;
+                padding: 2rem;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s ease;
+                border: 1px solid rgba(22, 93, 255, 0.05);
+                height: 100%;
+            }
+            
+            .value-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 30px rgba(22, 93, 255, 0.1);
+            }
+            
+            .value-icon {
+                width: 64px;
+                height: 64px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 12px;
+                background-color: rgba(22, 93, 255, 0.1);
+                margin-bottom: 1.5rem;
+                color: #165DFF;
+                font-size: 1.5rem;
+            }
+
+            /* 客户评价样式 */
+            .testimonial-card {
+                background-color: white;
+                border-radius: 16px;
+                padding: 2rem;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+                transition: all 0.3s ease;
+                border: 1px solid rgba(22, 93, 255, 0.05);
+                position: relative;
+            }
+            
+            .testimonial-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 30px rgba(22, 93, 255, 0.1);
+            }
+            
+            .testimonial-avatar {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-right: 1rem;
+                border: 3px solid rgba(22, 93, 255, 0.1);
+            }
+            
+            .star-rating {
+                color: #FFB400;
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+            
+            .achievement-card {
+                @apply bg-white rounded-xl border border-gray-200 p-6 hover-lift transition-custom;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white font-sans text-neutral-dark opacity-0 transition-opacity duration-500">
+    <!-- 导航栏 -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fa fa-heartbeat text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold text-neutral-dark">医疗AI开放平台</span>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-neutral-dark hover:text-primary transition-custom">首页</a>
+                <div class="relative group">
+                    <a href="#" class="text-neutral-dark hover:text-primary transition-custom flex items-center space-x-1">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute left-0 mt-2 w-64 bg-white shadow-lg rounded-lg overflow-hidden z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform -translate-y-2 group-hover:translate-y-0">
+                        <a href="text-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学文本分析</a>
+                        <a href="image-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block px-4 py-3 hover:bg-neutral-light">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block px-4 py-3 hover:bg-neutral-light">医学科研助手</a>
+                        <a href="education.html" class="block px-4 py-3 hover:bg-neutral-light">医学教育辅助</a>
+                        <a href="management-decision.html" class="block px-4 py-3 hover:bg-neutral-light">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="text-neutral-dark hover:text-primary transition-custom">解决方案</a>
+                    <a href="api-docs.html" class="text-neutral-dark hover:text-primary transition-custom">接口开发</a>
+                    <a href="news.html" class="text-neutral-dark hover:text-primary transition-custom">新闻动态</a>
+                    <a href="ai-results-dashboard.html" class="text-neutral-dark hover:text-primary transition-custom">统计面板</a>
+                    <a href="about.html" class="text-primary font-medium">关于我们</a>
+            </nav>
+            
+            <!-- 按钮组 -->
+            <div class="flex items-center space-x-4">
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-button" class="md:hidden text-neutral-dark">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="index.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">首页</a>
+                <div class="relative">
+                    <button class="flex items-center justify-between w-full py-2 px-4 hover:bg-neutral-light rounded-lg">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </button>
+                    <div class="pl-4 mt-2 space-y-2 border-l-2 border-primary">
+                        <a href="text-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学文本分析</a>
+                        <a href="image-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block py-2 hover:bg-neutral-light rounded-lg">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学科研助手</a>
+                        <a href="education.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学教育辅助</a>
+                        <a href="management-decision.html" class="block py-2 hover:bg-neutral-light rounded-lg">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">解决方案</a>
+                <a href="api-docs.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">接口开发</a>
+                <a href="news.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">新闻动态</a>
+                <a href="ai-results-dashboard.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">统计面板</a>
+                <a href="about.html" class="py-2 px-4 bg-primary/10 text-primary font-medium rounded-lg">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 页面标题区域 -->
+    <section class="pt-28 pb-16 bg-gradient-to-r from-primary/5 to-primary/10">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-3xl mx-auto text-center">
+                <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-neutral-dark leading-tight mb-4">关于我们</h1>
+                <p class="text-lg text-neutral mb-8">以AI技术赋能医疗，致力于推动医疗智能化转型，提升医疗服务质量与效率</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 公司简介 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col lg:flex-row gap-12 items-center">
+                <div class="lg:w-1/2">
+                    <h2 class="text-3xl font-bold text-neutral-dark mb-6">我们的使命</h2>
+                    <p class="text-lg text-neutral mb-6">医疗AI开放平台致力于通过人工智能技术革新医疗健康行业，让优质医疗资源触手可及，提升医疗服务的可及性、精准性和效率。</p>
+                    <p class="text-lg text-neutral mb-8">我们汇聚了来自人工智能、医学、计算机科学等领域的顶尖人才，依托先进的AI技术和丰富的医疗行业经验，打造全面的医疗AI能力开放平台，为医疗机构、科研院所、开发者提供易用、高效、可靠的AI能力服务。</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="achievement-card">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i class="fa fa-user-md text-primary text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-primary">50+</h4>
+                                    <p class="text-sm text-neutral">医疗专家团队</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-card">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i class="fa fa-hospital-o text-primary text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-primary">300+</h4>
+                                    <p class="text-sm text-neutral">合作医疗机构</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-card">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i class="fa fa-code-fork text-primary text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-primary">100+</h4>
+                                    <p class="text-sm text-neutral">AI模型与算法</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-card">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i class="fa fa-trophy text-primary text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-primary">50+</h4>
+                                    <p class="text-sm text-neutral">行业奖项与专利</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2">
+                    <div class="relative">
+                        <div class="aspect-video bg-neutral-light rounded-xl overflow-hidden shadow-lg">
+                            <img src="https://picsum.photos/id/119/800/500" alt="公司办公环境" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-primary text-white rounded-xl flex flex-col items-center justify-center shadow-lg">
+                            <span class="text-3xl font-bold">2018</span>
+                            <span class="text-sm">创立年份</span>
+                        </div>
+                        <div class="absolute -top-6 -right-6 w-32 h-32 bg-white border border-primary rounded-xl flex flex-col items-center justify-center shadow-lg">
+                            <i class="fa fa-heartbeat text-primary text-4xl mb-2"></i>
+                            <span class="text-sm text-neutral-dark">用心服务医疗</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 发展历程 -->
+    <section class="py-16 bg-neutral-light">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-3xl mx-auto text-center mb-12">
+                <h2 class="text-3xl font-bold text-neutral-dark mb-4">发展历程</h2>
+                <p class="text-lg text-neutral">从创立之初到现在，我们始终致力于医疗AI技术的创新与应用，不断推动行业发展</p>
+            </div>
+
+            <div class="max-w-3xl mx-auto">
+                <div class="timeline-item">
+                    <div class="text-primary font-semibold mb-2">2018年 - 公司创立</div>
+                    <p class="text-neutral">由来自国内外顶尖高校和医疗机构的专家团队创立，致力于医疗AI技术研发。</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="text-primary font-semibold mb-2">2019年 - 首个产品发布</div>
+                    <p class="text-neutral">推出医学影像智能分析系统，获得首批合作医院认可，开始商业化落地。</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="text-primary font-semibold mb-2">2020年 - 技术突破</div>
+                    <p class="text-neutral">医学文本分析技术取得重大突破，准确率达到行业领先水平，获得多项专利。</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="text-primary font-semibold mb-2">2021年 - 平台升级</div>
+                    <p class="text-neutral">医疗AI能力开放平台正式上线，提供标准化API接口，支持第三方开发者接入。</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="text-primary font-semibold mb-2">2022年 - 快速扩张</div>
+                    <p class="text-neutral">合作伙伴数量突破200家，产品覆盖全国20多个省市自治区，用户规模显著增长。</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="text-primary font-semibold mb-2">2023年 - 生态构建</div>
+                    <p class="text-neutral">构建医疗AI产业生态，与多所高校、科研机构建立战略合作，推动产学研深度融合。</p>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="text-primary font-semibold mb-2">2024年 - 持续创新</div>
+                    <p class="text-neutral">发布新一代医疗大语言模型，推出更多元化的医疗AI解决方案，持续引领行业发展。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 核心团队 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-3xl mx-auto text-center mb-12">
+                <h2 class="text-3xl font-bold text-neutral-dark mb-4">核心团队</h2>
+                <p class="text-lg text-neutral">汇聚人工智能、医学、计算机科学等领域的顶尖人才，打造专业、高效的技术团队</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="team-card">
+                    <div class="h-64 bg-neutral-light overflow-hidden">
+                        <img src="https://picsum.photos/id/1025/400/500" alt="张教授" class="w-full h-full object-cover object-center">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-1">张伟</h3>
+                        <p class="text-primary mb-3">创始人 & CEO</p>
+                        <p class="text-sm text-neutral mb-4">前知名AI公司技术总监，医学人工智能领域专家，拥有10年以上AI技术研发和管理经验。</p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-linkedin"></i></a>
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-github"></i></a>
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-card">
+                    <div class="h-64 bg-neutral-light overflow-hidden">
+                        <img src="https://picsum.photos/id/1000/400/500" alt="李医生" class="w-full h-full object-cover object-center">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-1">李明</h3>
+                        <p class="text-primary mb-3">首席医学官</p>
+                        <p class="text-sm text-neutral mb-4">三甲医院主任医师，医学博士，在临床和医学研究领域拥有丰富经验，主导医疗AI产品的医学验证。</p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-linkedin"></i></a>
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-github"></i></a>
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-card">
+                    <div class="h-64 bg-neutral-light overflow-hidden">
+                        <img src="https://picsum.photos/id/1001/400/500" alt="王工程师" class="w-full h-full object-cover object-center">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-1">王芳</h3>
+                        <p class="text-primary mb-3">首席技术官</p>
+                        <p class="text-sm text-neutral mb-4">前知名科技公司高级研究员，AI算法专家，在机器学习和深度学习领域发表多篇学术论文。</p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-linkedin"></i></a>
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-github"></i></a>
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-card">
+                    <div class="h-64 bg-neutral-light overflow-hidden">
+                        <img src="https://picsum.photos/id/1003/400/500" alt="赵博士" class="w-full h-full object-cover object-center">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-1">赵强</h3>
+                        <p class="text-primary mb-3">首席科学家</p>
+                        <p class="text-sm text-neutral mb-4">AI领域知名学者，拥有丰富的医疗AI研究经验，主持多项国家级科研项目。</p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-linkedin"></i></a>
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-github"></i></a>
+                            <a href="#" class="text-neutral hover:text-primary transition-custom"><i class="fa fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技术实力 -->
+    <section class="py-16 bg-neutral-light">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-3xl mx-auto text-center mb-12">
+                <h2 class="text-3xl font-bold text-neutral-dark mb-4">技术实力</h2>
+                <p class="text-lg text-neutral">依托先进的人工智能技术和医疗专业知识，我们在多个医疗AI领域取得了突破性成果</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div>
+                    <div class="bg-white rounded-xl border border-neutral-200 p-6 mb-6">
+                        <h3 class="text-xl font-semibold mb-4">核心技术</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-medium">医疗大语言模型</span>
+                                    <span class="text-primary">95%</span>
+                                </div>
+                                <div class="h-4 bg-neutral-light rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary rounded-full" style="width: 95%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-medium">医学影像识别</span>
+                                    <span class="text-primary">98%</span>
+                                </div>
+                                <div class="h-4 bg-neutral-light rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary rounded-full" style="width: 98%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-medium">自然语言处理</span>
+                                    <span class="text-primary">96%</span>
+                                </div>
+                                <div class="h-4 bg-neutral-light rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary rounded-full" style="width: 96%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-medium">知识图谱构建</span>
+                                    <span class="text-primary">92%</span>
+                                </div>
+                                <div class="h-4 bg-neutral-light rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary rounded-full" style="width: 92%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-medium">多模态融合</span>
+                                    <span class="text-primary">94%</span>
+                                </div>
+                                <div class="h-4 bg-neutral-light rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary rounded-full" style="width: 94%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl border border-neutral-200 p-6">
+                        <h3 class="text-xl font-semibold mb-4">研发投入</h3>
+                        <canvas id="researchInvestmentChart" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="bg-white rounded-xl border border-neutral-200 p-6 mb-6">
+                        <h3 class="text-xl font-semibold mb-4">知识产权</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i class="fa fa-lightbulb-o text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium mb-1">发明专利</h4>
+                                    <p class="text-sm text-neutral">拥有30项医疗AI领域发明专利，涵盖影像识别、自然语言处理、知识图谱等核心技术。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i class="fa fa-copyright text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium mb-1">软件著作权</h4>
+                                    <p class="text-sm text-neutral">拥有50项软件著作权，覆盖医疗AI全产品线，包括核心算法、应用系统和平台组件。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i class="fa fa-book text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium mb-1">学术成果</h4>
+                                    <p class="text-sm text-neutral">在国际顶级学术会议和期刊发表论文80余篇，引用次数超过2000次。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl border border-neutral-200 p-6">
+                        <h3 class="text-xl font-semibold mb-4">技术合作</h3>
+                        
+                        <p class="text-neutral mb-6">我们与全球顶尖的医疗机构、高校和科技企业建立了广泛的战略合作关系，共同推动医疗AI技术的创新与应用。通过产学研深度融合，我们持续提升技术实力，为医疗行业提供更先进的AI解决方案。</p>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                        <i class="fa fa-university text-primary"></i>
+                                    </div>
+                                    <h4 class="font-medium text-neutral-dark">学术合作</h4>
+                                </div>
+                                <p class="text-neutral mb-3">与国内外顶尖高校共建医疗AI研究平台：</p>
+                                <ul class="space-y-3 text-neutral">
+                                    <li class="flex items-start gap-3">
+                                        <i class="fa fa-graduation-cap text-primary mt-1"></i>
+                                        <span><span class="font-medium">国内合作</span>：与北大、清华、上交等建立联合实验室，专注医疗大模型研发</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fa fa-globe text-primary mt-1"></i>
+                                        <span><span class="font-medium">国际交流</span>：与哈佛、斯坦福等定期开展联合研究与学术交流</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fa fa-users text-primary mt-1"></i>
+                                        <span><span class="font-medium">人才培养</span>：建立实习基地和联合培养项目，输送医疗AI复合型人才</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                        <i class="fa fa-hospital-o text-primary"></i>
+                                    </div>
+                                    <h4 class="font-medium text-neutral-dark">医疗机构合作</h4>
+                                </div>
+                                <p class="text-neutral mb-3">与三甲医院推进AI临床应用：</p>
+                                <ul class="space-y-3 text-neutral">
+                                    <li class="flex items-start gap-3">
+                                        <i class="fa fa-stethoscope text-primary mt-1"></i>
+                                        <span><span class="font-medium">临床验证</span>：与协和、华西等合作，AI辅助诊断准确率达95%以上</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fa fa-database text-primary mt-1"></i>
+                                        <span><span class="font-medium">数据共享</span>：与瑞金、湘雅等共建高质量医疗数据集，保障隐私安全</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fa fa-heartbeat text-primary mt-1"></i>
+                                        <span><span class="font-medium">智能系统</span>：开发特定疾病AI辅助决策系统，提升诊疗效率</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                        <i class="fa fa-building text-primary"></i>
+                                    </div>
+                                    <h4 class="font-medium text-neutral-dark">企业合作</h4>
+                                </div>
+                                <p class="text-neutral mb-3">与科技和医疗企业共建产业生态：</p>
+                                <ul class="space-y-3 text-neutral">
+                                    <li class="flex items-start gap-3">
+                                        <i class="fa fa-cogs text-primary mt-1"></i>
+                                        <span><span class="font-medium">技术创新</span>：合作研发高性能计算等基础设施，支撑AI应用</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fa fa-puzzle-piece text-primary mt-1"></i>
+                                        <span><span class="font-medium">生态共建</span>：AI技术与医疗设备、软件深度融合，打造智能方案</span>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <i class="fa fa-bullhorn text-primary mt-1"></i>
+                                        <span><span class="font-medium">市场拓展</span>：建立联合营销机制，扩大技术应用覆盖面</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 p-4 bg-primary/5 rounded-lg">
+                            <p class="text-sm text-neutral-dark"><i class="fa fa-lightbulb-o text-primary mr-2"></i>我们欢迎更多医疗机构、高校和企业加入我们的合作伙伴网络，共同探索医疗AI的无限可能。通过开放合作，我们致力于构建一个繁荣的医疗AI生态系统，为提升全球医疗健康水平贡献力量。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 企业文化 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-3xl mx-auto text-center mb-12">
+                <h2 class="text-3xl font-bold text-neutral-dark mb-4">企业文化</h2>
+                <p class="text-lg text-neutral">我们秉承以人为本、科技创新、合作共赢的企业文化理念，共同推动医疗AI事业发展</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="achievement-card">
+                    <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-users text-primary text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">使命</h3>
+                    <p class="text-neutral">以AI技术赋能医疗，让优质医疗资源触手可及，提升医疗服务质量与效率。</p>
+                </div>
+                
+                <div class="achievement-card">
+                    <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-eye text-primary text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">愿景</h3>
+                    <p class="text-neutral">成为全球领先的医疗AI技术提供商，构建智能医疗生态系统，助力健康中国建设。</p>
+                </div>
+                
+                <div class="achievement-card">
+                    <div class="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-heart text-primary text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">价值观</h3>
+                    <p class="text-neutral">创新、专业、诚信、合作、责任，以患者为中心，以科技为驱动，以品质为保障。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 企业文化部分结束 -->
+
+    <!-- 平台优势 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-3xl mx-auto text-center mb-12">
+                <h2 class="text-3xl font-bold text-neutral-dark mb-4">我们的优势</h2>
+                <p class="text-lg text-neutral">医疗AI能力开放中心致力于为医疗机构提供全方位的智能解决方案，赋能医疗创新发展</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div class="achievement-card hover-lift">
+                    <div class="flex flex-col items-center text-center p-6 rounded-xl bg-neutral-50 border border-neutral-100">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-graduation-cap text-primary text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">专业团队</h3>
+                        <p class="text-neutral">由医学专家、AI工程师和产品经理组成的专业团队，提供全方位支持</p>
+                    </div>
+                </div>
+                
+                <div class="achievement-card hover-lift">
+                    <div class="flex flex-col items-center text-center p-6 rounded-xl bg-neutral-50 border border-neutral-100">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-certificate text-primary text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">权威认证</h3>
+                        <p class="text-neutral">通过多项医疗AI行业认证，确保技术和产品的专业性和可靠性</p>
+                    </div>
+                </div>
+                
+                <div class="achievement-card hover-lift">
+                    <div class="flex flex-col items-center text-center p-6 rounded-xl bg-neutral-50 border border-neutral-100">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                            <i class="fa fa-users text-primary text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">广泛应用</h3>
+                        <p class="text-neutral">服务超过500家医疗机构，在临床、教学、科研等领域有丰富实践经验</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-primary/5 to-primary/10 p-8 rounded-2xl">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h3 class="text-2xl font-bold text-neutral-dark mb-4">选择我们的理由</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center mr-4 mt-1">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-neutral-dark mb-2">精准的AI算法</h4>
+                                <p class="text-neutral">基于海量医疗数据训练的AI模型，确保分析结果的准确性和可靠性</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center mr-4 mt-1">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-neutral-dark mb-2">完善的技术支持</h4>
+                                <p class="text-neutral">提供7×24小时技术支持和专业培训，确保系统稳定运行</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center mr-4 mt-1">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-neutral-dark mb-2">灵活的部署方案</h4>
+                                <p class="text-neutral">支持云端、本地和混合部署，满足不同医疗机构的需求</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center mr-4 mt-1">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-neutral-dark mb-2">持续的技术创新</h4>
+                                <p class="text-neutral">不断优化算法和功能，保持技术的先进性和竞争力</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral-dark text-white pt-16 pb-8">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                            <i class="fa fa-heartbeat text-primary text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold">医疗AI开放平台</span>
+                    </div>
+                    <p class="text-neutral-light mb-4">赋能医疗创新，助力智能医疗发展，提供专业的医疗AI能力服务。</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-weixin text-xl"></i></a>
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-weibo text-xl"></i></a>
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-github text-xl"></i></a>
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-linkedin text-xl"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">产品服务</h3>
+                    <ul class="space-y-2">
+                        <li><a href="text-analysis.html" class="text-neutral-light hover:text-white transition-custom">医学文本分析</a></li>
+                        <li><a href="image-analysis.html" class="text-neutral-light hover:text-white transition-custom">医学影像智能分析</a></li>
+                        <li><a href="chatbot.html" class="text-neutral-light hover:text-white transition-custom">智能问诊与对话</a></li>
+                        <li><a href="research-assistant.html" class="text-neutral-light hover:text-white transition-custom">医学科研助手</a></li>
+                        <li><a href="education.html" class="text-neutral-light hover:text-white transition-custom">医学教育辅助</a></li>
+                        <li><a href="management-decision.html" class="text-neutral-light hover:text-white transition-custom">医疗管理决策支持</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">解决方案</h3>
+                    <ul class="space-y-2">
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">智慧医院解决方案</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">基层医疗AI赋能</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">医学教育智能化</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">医学科研加速器</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">医院运营智能决策</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">智慧健康管理平台</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">关于我们</h3>
+                    <ul class="space-y-2">
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">公司介绍</a></li>
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">核心团队</a></li>
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">技术实力</a></li>
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">企业文化</a></li>
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">加入我们</a></li>
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">联系我们</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-neutral-light/10 text-center text-neutral-light">
+                <p>&copy; 2023 医疗AI能力开放中心. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 z-50">
+        <i class="fa fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // 页面加载完成后的动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('opacity-100');
+            document.body.classList.remove('opacity-0');
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 10) {
+                    navbar.classList.add('shadow-md');
+                    navbar.classList.remove('shadow-sm');
+                } else {
+                    navbar.classList.remove('shadow-md');
+                    navbar.classList.add('shadow-sm');
+                }
+            });
+            
+            // 移动端菜单切换
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                    
+                    // 关闭移动端菜单
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+            
+            // 回到顶部按钮
+            const backToTopButton = document.getElementById('back-to-top');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.remove('opacity-0', 'invisible');
+                    backToTopButton.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopButton.classList.add('opacity-0', 'invisible');
+                    backToTopButton.classList.remove('opacity-100', 'visible');
+                }
+            });
+            
+            backToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 初始化研发投入图表
+            const ctx = document.getElementById('researchInvestmentChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2018', '2019', '2020', '2021', '2022', '2023'],
+                        datasets: [{
+                            label: '研发投入（万元）',
+                            data: [500, 800, 1200, 1800, 2500, 3500],
+                            fill: true,
+                            backgroundColor: 'rgba(22, 93, 255, 0.1)',
+                            borderColor: 'rgba(22, 93, 255, 1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+            
+
+            
+            // 为所有卡片添加悬停效果动画
+            const hoverCards = document.querySelectorAll('.hover-lift');
+            hoverCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 10px 25px -5px rgba(22, 93, 255, 0.1)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.05)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

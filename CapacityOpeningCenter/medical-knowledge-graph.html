@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医学知识图谱 - 医疗AI能力开放中心</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- 配置Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0FC6C2',
+                        accent: '#722ED1',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        neutral: '#86909C',
+                        'neutral-light': '#F2F3F5',
+                        'neutral-dark': '#4E5969'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+            .hover-lift {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .hover-lift:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(22, 93, 255, 0.1);
+            }
+            .gradient-bg {
+                background: linear-gradient(135deg, var(--tw-gradient-stops));
+            }
+            .knowledge-card {
+                @apply bg-white rounded-xl shadow-lg p-6 transition-custom hover:shadow-xl;
+            }
+            .graph-node {
+                @apply absolute rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer;
+            }
+            .graph-node:hover {
+                @apply z-10 scale-110;
+            }
+            .feature-icon {
+                @apply w-14 h-14 rounded-full flex items-center justify-center text-white text-xl mb-4;
+            }
+        }
+    </style>
+</head>
+<body class="bg-neutral-light font-sans text-neutral-dark opacity-0 transition-opacity duration-500">
+    <!-- 导航栏 -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fa fa-heartbeat text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold text-neutral-dark">医疗AI开放平台</span>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-neutral-dark hover:text-primary transition-custom">首页</a>
+                <div class="relative group">
+                    <a href="#" class="text-primary font-medium flex items-center space-x-1">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute left-0 mt-2 w-64 bg-white shadow-lg rounded-lg overflow-hidden z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform -translate-y-2 group-hover:translate-y-0">
+                        <a href="text-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学文本分析</a>
+                        <a href="image-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block px-4 py-3 hover:bg-neutral-light">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block px-4 py-3 hover:bg-neutral-light">医学科研助手</a>
+                        <a href="education.html" class="block px-4 py-3 hover:bg-neutral-light">医学教育辅助</a>
+                        <a href="management-decision.html" class="block px-4 py-3 hover:bg-neutral-light">医疗管理决策支持</a>
+                        <a href="medical-knowledge-graph.html" class="block px-4 py-3 bg-primary/10 text-primary font-medium">医学知识图谱</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="text-neutral-dark hover:text-primary transition-custom">解决方案</a>
+                <a href="api-docs.html" class="text-neutral-dark hover:text-primary transition-custom">API文档</a>
+                <a href="news.html" class="text-neutral-dark hover:text-primary transition-custom">新闻动态</a>
+                    <a href="ai-results-dashboard.html" class="text-neutral-dark hover:text-primary transition-custom">统计面板</a>
+                <a href="about.html" class="text-neutral-dark hover:text-primary transition-custom">关于我们</a>
+            </nav>
+            
+            <!-- 按钮组 -->
+            <div class="flex items-center space-x-4">
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-button" class="md:hidden text-neutral-dark">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="index.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">首页</a>
+                <div class="relative">
+                    <button class="flex items-center justify-between w-full py-2 px-4 bg-primary/10 text-primary font-medium rounded-lg">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </button>
+                    <div class="pl-4 mt-2 space-y-2 border-l-2 border-primary">
+                        <a href="text-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学文本分析</a>
+                        <a href="image-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block py-2 hover:bg-neutral-light rounded-lg">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学科研助手</a>
+                        <a href="education.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学教育辅助</a>
+                        <a href="management-decision.html" class="block py-2 hover:bg-neutral-light rounded-lg">医疗管理决策支持</a>
+                        <a href="medical-knowledge-graph.html" class="block py-2 bg-primary/10 text-primary font-medium rounded-lg">医学知识图谱</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">解决方案</a>
+                <a href="api-docs.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">API文档</a>
+                <a href="news.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">新闻动态</a>
+                <a href="ai-results-dashboard.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">统计面板</a>
+                <a href="about.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 页面标题区域 -->
+    <section class="pt-28 pb-16 bg-gradient-to-r from-primary to-primary/80 text-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-3xl">
+                <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight mb-4">医学知识图谱</h1>
+                <p class="text-xl mb-8 text-white/90">构建医疗领域知识网络，提供精准医学关联分析与智能推理</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="api-docs.html" class="px-6 py-3 bg-white text-primary rounded-lg shadow-lg hover:bg-white/90 transition-custom font-medium">
+                        <i class="fa fa-code mr-2"></i>查看API文档
+                    </a>
+                    <a href="#demo" class="px-6 py-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg hover:bg-white/30 transition-custom font-medium">
+                        <i class="fa fa-play-circle mr-2"></i>功能演示
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 知识图谱概述 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="lg:w-1/2">
+                    <span class="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">知识驱动的医疗智能</span>
+                    <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-neutral-dark mb-6">构建医疗知识网络，赋能临床决策</h2>
+                    <p class="text-neutral mb-6 text-lg">我们的医学知识图谱整合了海量医学文献、临床指南、药品信息和疾病数据库，构建了全面而精准的医疗知识网络，为医疗机构、研究人员和开发者提供强大的知识服务能力。</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-1">多源数据整合</h4>
+                                <p class="text-sm text-neutral">整合权威医学数据库、文献、指南等多源信息</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-1">知识推理能力</h4>
+                                <p class="text-sm text-neutral">支持复杂的医学知识推理和关联发现</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-1">实时更新机制</h4>
+                                <p class="text-sm text-neutral">持续更新最新医学研究和临床指南</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-1">标准化知识体系</h4>
+                                <p class="text-sm text-neutral">采用国际标准医学术语和分类体系</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="flex -space-x-2">
+                            <img src="https://picsum.photos/id/1001/40/40" alt="用户头像" class="w-10 h-10 rounded-full border-2 border-white">
+                            <img src="https://picsum.photos/id/1002/40/40" alt="用户头像" class="w-10 h-10 rounded-full border-2 border-white">
+                            <img src="https://picsum.photos/id/1003/40/40" alt="用户头像" class="w-10 h-10 rounded-full border-2 border-white">
+                        </div>
+                        <div class="text-sm">
+                            <span class="font-medium text-primary">500+</span> 医疗机构已使用
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2">
+                    <div class="relative knowledge-graph-demo bg-neutral-light rounded-xl p-6 h-[500px] overflow-hidden">
+                        <!-- 模拟知识图谱可视化 -->
+                        <div class="absolute inset-0" id="knowledge-graph-visualization">
+                            <!-- 节点将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 核心功能 -->
+    <section class="py-16 bg-neutral-light">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">核心功能</span>
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-neutral-dark mb-6">全方位的医学知识服务能力</h2>
+                <p class="text-neutral text-lg">我们的医学知识图谱提供强大的知识提取、关系构建、智能检索和推理分析能力，助力医疗智能化转型</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 功能卡片1 -->
+                <div class="knowledge-card hover-lift">
+                    <div class="feature-icon bg-primary">
+                        <i class="fa fa-cogs"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">知识提取与构建</h3>
+                    <p class="text-neutral mb-4">从医学文献、临床指南和电子病历中自动提取医学实体、关系和属性，构建结构化知识网络</p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>实体识别与标准化</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>关系抽取与验证</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>知识图谱自动构建</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="text-primary font-medium inline-flex items-center">
+                        了解更多 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                <!-- 功能卡片2 -->
+                <div class="knowledge-card hover-lift">
+                    <div class="feature-icon bg-secondary">
+                        <i class="fa fa-search"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">智能知识检索</h3>
+                    <p class="text-neutral mb-4">提供语义化的医学知识检索能力，支持多维度查询、模糊匹配和相关推荐</p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>语义搜索与查询扩展</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>多维度知识关联查询</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>个性化知识推荐</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="text-primary font-medium inline-flex items-center">
+                        了解更多 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                <!-- 功能卡片3 -->
+                <div class="knowledge-card hover-lift">
+                    <div class="feature-icon bg-accent">
+                        <i class="fa fa-lightbulb-o"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">医学知识推理</h3>
+                    <p class="text-neutral mb-4">基于知识图谱的推理引擎，支持疾病诊断辅助、治疗方案推荐和风险预测</p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>规则推理与逻辑验证</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>知识路径发现</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>异常模式检测</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="text-primary font-medium inline-flex items-center">
+                        了解更多 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                <!-- 功能卡片4 -->
+                <div class="knowledge-card hover-lift">
+                    <div class="feature-icon bg-warning">
+                        <i class="fa fa-bar-chart"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">数据分析与洞察</h3>
+                    <p class="text-neutral mb-4">通过知识图谱分析医学数据之间的关系，发现潜在模式和趋势，支持决策制定</p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>关联规则挖掘</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>知识图谱可视化分析</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>趋势预测与分析</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="text-primary font-medium inline-flex items-center">
+                        了解更多 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                <!-- 功能卡片5 -->
+                <div class="knowledge-card hover-lift">
+                    <div class="feature-icon bg-danger">
+                        <i class="fa fa-shield"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">知识质量控制</h3>
+                    <p class="text-neutral mb-4">提供知识验证、更新和维护机制，确保知识图谱的准确性、完整性和时效性</p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>知识冲突检测</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>知识可信度评估</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>自动化知识更新</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="text-primary font-medium inline-flex items-center">
+                        了解更多 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                
+                <!-- 功能卡片6 -->
+                <div class="knowledge-card hover-lift">
+                    <div class="feature-icon bg-primary/80">
+                        <i class="fa fa-plug"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">开放API服务</h3>
+                    <p class="text-neutral mb-4">提供标准化的API接口，方便开发者集成知识图谱能力到各类医疗应用中</p>
+                    <ul class="space-y-2 mb-6">
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>RESTful API接口</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>多语言SDK支持</span>
+                        </li>
+                        <li class="flex items-center space-x-2 text-sm">
+                            <i class="fa fa-check text-primary"></i>
+                            <span>详细的API文档</span>
+                        </li>
+                    </ul>
+                    <a href="api-docs.html" class="text-primary font-medium inline-flex items-center">
+                        查看API文档 <i class="fa fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能演示 -->
+    <section id="demo" class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">功能演示</span>
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-neutral-dark mb-6">交互式知识图谱体验</h2>
+                <p class="text-neutral text-lg">探索医学知识之间的关联，感受知识图谱如何支持医疗决策</p>
+            </div>
+            
+            <div class="bg-neutral-light rounded-xl p-6 md:p-8 shadow-lg">
+                <div class="mb-6">
+                    <div class="flex flex-col md:flex-row gap-4 mb-6">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium mb-2">搜索医学术语</label>
+                            <div class="relative">
+                                <input type="text" id="search-term" placeholder="输入疾病、药物或症状，如'糖尿病'" 
+                                    class="w-full px-4 py-3 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-custom">
+                                <button id="search-button" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-custom">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="w-full md:w-48">
+                            <label class="block text-sm font-medium mb-2">显示层级</label>
+                            <select id="hierarchy-level" class="w-full px-4 py-3 rounded-lg border border-neutral-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-custom">
+                                <option value="1">一级关联</option>
+                                <option value="2" selected>二级关联</option>
+                                <option value="3">三级关联</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <button class="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-medium hover:bg-primary/20 transition-custom">
+                            <i class="fa fa-plus mr-1"></i> 疾病
+                        </button>
+                        <button class="px-4 py-2 bg-secondary/10 text-secondary rounded-lg text-sm font-medium hover:bg-secondary/20 transition-custom">
+                            <i class="fa fa-plus mr-1"></i> 药物
+                        </button>
+                        <button class="px-4 py-2 bg-warning/10 text-warning rounded-lg text-sm font-medium hover:bg-warning/20 transition-custom">
+                            <i class="fa fa-plus mr-1"></i> 症状
+                        </button>
+                        <button class="px-4 py-2 bg-accent/10 text-accent rounded-lg text-sm font-medium hover:bg-accent/20 transition-custom">
+                            <i class="fa fa-plus mr-1"></i> 检查
+                        </button>
+                        <button class="px-4 py-2 bg-neutral/10 text-neutral rounded-lg text-sm font-medium hover:bg-neutral/20 transition-custom">
+                            <i class="fa fa-refresh mr-1"></i> 重置视图
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg p-4 h-[500px] shadow-sm border border-neutral-200 overflow-hidden" id="interactive-graph-container">
+                    <!-- 交互式知识图谱将通过JavaScript动态生成 -->
+                    <div class="flex items-center justify-center h-full text-neutral">
+                        <p>请输入医学术语并点击搜索按钮开始探索</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6 bg-white rounded-lg p-4 border border-neutral-200">
+                    <h4 class="font-medium mb-3">知识关联结果</h4>
+                    <div id="search-results" class="space-y-3">
+                        <div class="p-3 bg-neutral-light rounded-lg text-sm">
+                            <p class="font-medium">请输入查询条件查看相关知识关联</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 应用场景 -->
+    <section class="py-16 bg-neutral-light">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">应用场景</span>
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-neutral-dark mb-6">医学知识图谱的广泛应用</h2>
+                <p class="text-neutral text-lg">我们的知识图谱能力已在多个医疗场景中发挥重要作用，为临床实践、医学研究和健康管理提供支持</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 应用场景1 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg hover-lift">
+                    <div class="h-48 bg-primary/10 flex items-center justify-center">
+                        <i class="fa fa-user-md text-primary text-6xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">辅助临床决策</h3>
+                        <p class="text-neutral mb-4">提供疾病相关的全面医学知识，辅助医生进行诊断、制定治疗方案和预测疾病风险</p>
+                        <ul class="space-y-2 mb-6">
+                            <li class="flex items-center space-x-2 text-sm">
+                                <i class="fa fa-check text-primary"></i>
+                                <span>相似病例推荐</span>
+                            </li>
+                            <li class="flex items-center space-x-2 text-sm">
+                                <i class="fa fa-check text-primary"></i>
+                                <span>药物相互作用检测</span>
+                            </li>
+                            <li class="flex items-center space-x-2 text-sm">
+                                <i class="fa fa-check text-primary"></i>
+                                <span>诊断辅助支持</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 应用场景2 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg hover-lift">
+                    <div class="h-48 bg-secondary/10 flex items-center justify-center">
+                        <i class="fa fa-flask text-secondary text-6xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">医学研究加速</h3>
+                        <p class="text-neutral mb-4">帮助研究人员快速发现研究热点、潜在关联和研究空白，加速医学研究进程</p>
+                        <ul class="space-y-2 mb-6">
+                            <li class="flex items-center space-x-2 text-sm">
+                                <i class="fa fa-check text-primary"></i>
+                                <span>研究主题趋势分析</span>
+                            </li>
+                            <li class="flex items-center space-x-2 text-sm">
+                                <i class="fa fa-check text-primary"></i>
+                                <span>文献知识挖掘</span>
+                            </li>
+                            <li class="flex items-center space-x-2 text-sm">
+                                <i class="fa fa-check text-primary"></i>
+                                <span>新假设生成</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 应用场景3 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg hover-lift">
+                    <div class="h-48 bg-accent/10 flex items-center justify-center">
+                        <i class="fa fa-book text-accent text-6xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">医学教育创新</h3>
+                        <p class="text-neutral mb-4">为医学生和医护人员提供交互式的医学知识学习工具，提升学习效率和知识掌握深度</p>
+                        <ul class="space-y-2 mb-6">
+                            <li class="flex items-center space-x-2 text-sm">
+                                <i class="fa fa-check text-primary"></i>
+                                <span>交互式知识学习</span>
+                            </li>
+                            <li class="flex items-center space-x-2 text-sm">
+                                <i class="fa fa-check text-primary"></i>
+                                <span>医学概念可视化</span>
+                            </li>
+                            <li class="flex items-center space-x-2 text-sm">
+                                <i class="fa fa-check text-primary"></i>
+                                <span>个性化学习路径</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 知识图谱数据统计 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">数据规模</span>
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-neutral-dark mb-6">全面而精准的医学知识体系</h2>
+                <p class="text-neutral text-lg">我们的知识图谱涵盖了海量医学实体、关系和属性，构建了全面而精准的医学知识体系</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-neutral-light rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-6">知识图谱组成</h3>
+                    <canvas id="knowledge-composition-chart" height="300"></canvas>
+                </div>
+                
+                <div class="bg-neutral-light rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-6">知识增长率</h3>
+                    <canvas id="knowledge-growth-chart" height="300"></canvas>
+                </div>
+            </div>
+            
+            <!-- 知识图谱基础统计 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
+                <div class="bg-primary/5 rounded-xl p-6 text-center">
+                    <div class="text-4xl font-bold text-primary mb-2">200万+</div>
+                    <p class="text-neutral">医学实体</p>
+                </div>
+                
+                <div class="bg-secondary/5 rounded-xl p-6 text-center">
+                    <div class="text-4xl font-bold text-secondary mb-2">5000万+</div>
+                    <p class="text-neutral">实体关系</p>
+                </div>
+                
+                <div class="bg-accent/5 rounded-xl p-6 text-center">
+                    <div class="text-4xl font-bold text-accent mb-2">500万+</div>
+                    <p class="text-neutral">医学文献</p>
+                </div>
+                
+                <div class="bg-warning/5 rounded-xl p-6 text-center">
+                    <div class="text-4xl font-bold text-warning mb-2">300+</div>
+                    <p class="text-neutral">医学专科</p>
+                </div>
+            </div>
+            
+            <!-- 平台使用统计 -->
+            <div class="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-2xl p-8 border border-primary/10">
+                <h3 class="text-2xl font-bold text-center mb-8">平台使用统计</h3>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
+                    <div class="bg-white rounded-xl p-6 text-center shadow-sm transform transition-all hover:shadow-md hover:-translate-y-1">
+                        <i class="fa fa-cubes text-3xl text-primary mb-4"></i>
+                        <div class="text-4xl font-bold text-primary mb-2">128+</div>
+                        <p class="text-neutral">已用模型数</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-6 text-center shadow-sm transform transition-all hover:shadow-md hover:-translate-y-1">
+                        <i class="fa fa-users text-3xl text-secondary mb-4"></i>
+                        <div class="text-4xl font-bold text-secondary mb-2">5000+</div>
+                        <p class="text-neutral">用户数</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-6 text-center shadow-sm transform transition-all hover:shadow-md hover:-translate-y-1">
+                        <i class="fa fa-hospital-o text-3xl text-accent mb-4"></i>
+                        <div class="text-4xl font-bold text-accent mb-2">86+</div>
+                        <p class="text-neutral">科室数</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-6 text-center shadow-sm transform transition-all hover:shadow-md hover:-translate-y-1">
+                        <i class="fa fa-refresh text-3xl text-warning mb-4"></i>
+                        <div class="text-4xl font-bold text-warning mb-2">1200万+</div>
+                        <p class="text-neutral">调用数</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-6 text-center shadow-sm transform transition-all hover:shadow-md hover:-translate-y-1">
+                        <i class="fa fa-book text-3xl text-danger mb-4"></i>
+                        <div class="text-4xl font-bold text-danger mb-2">520+</div>
+                        <p class="text-neutral">知识库数量</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API接入指南 -->
+    <section class="py-16 bg-neutral-light">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="inline-block px-4 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">快速接入</span>
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-neutral-dark mb-6">简单三步，集成知识图谱能力</h2>
+                <p class="text-neutral text-lg">我们提供简洁易用的API接口和丰富的SDK支持，帮助开发者快速集成知识图谱能力</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-6 max-w-4xl mx-auto">
+                <!-- 步骤1 -->
+                <div class="flex-1 relative">
+                    <div class="absolute -top-4 -left-4 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl">1</div>
+                    <div class="bg-white rounded-xl p-6 pt-10 shadow-lg hover-lift h-full">
+                        <h3 class="text-xl font-bold mb-3">获取API密钥</h3>
+                        <p class="text-neutral mb-4">注册账号并申请API密钥，获取访问我们知识图谱服务的凭证</p>
+                        <img src="https://picsum.photos/id/180/400/200" alt="获取API密钥" class="w-full h-40 object-cover rounded-lg mb-4">
+                        <a href="#" class="text-primary font-medium inline-flex items-center">
+                            立即注册 <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 步骤2 -->
+                <div class="hidden md:block text-primary self-center">
+                    <i class="fa fa-long-arrow-right text-4xl"></i>
+                </div>
+                <div class="md:hidden text-primary text-center my-2">
+                    <i class="fa fa-long-arrow-down text-4xl"></i>
+                </div>
+                
+                <!-- 步骤2 -->
+                <div class="flex-1 relative">
+                    <div class="absolute -top-4 -left-4 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl">2</div>
+                    <div class="bg-white rounded-xl p-6 pt-10 shadow-lg hover-lift h-full">
+                        <h3 class="text-xl font-bold mb-3">集成SDK</h3>
+                        <p class="text-neutral mb-4">选择适合您开发语言的SDK，快速集成到您的应用中</p>
+                        <div class="bg-neutral-light rounded-lg p-4 mb-4">
+                            <pre class="text-sm text-neutral-dark"><code>// JavaScript SDK 示例
+npm install medical-knowledge-graph-sdk
+
+const MedicalKG = require('medical-knowledge-graph-sdk');
+const kgClient = new MedicalKG({
+  apiKey: '您的API密钥'
+});</code></pre>
+                        </div>
+                        <a href="api-docs.html" class="text-primary font-medium inline-flex items-center">
+                            查看SDK文档 <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="hidden md:block text-primary self-center">
+                    <i class="fa fa-long-arrow-right text-4xl"></i>
+                </div>
+                <div class="md:hidden text-primary text-center my-2">
+                    <i class="fa fa-long-arrow-down text-4xl"></i>
+                </div>
+                
+                <!-- 步骤3 -->
+                <div class="flex-1 relative">
+                    <div class="absolute -top-4 -left-4 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xl">3</div>
+                    <div class="bg-white rounded-xl p-6 pt-10 shadow-lg hover-lift h-full">
+                        <h3 class="text-xl font-bold mb-3">调用API接口</h3>
+                        <p class="text-neutral mb-4">使用SDK调用知识图谱API接口，获取所需的医学知识服务</p>
+                        <div class="bg-neutral-light rounded-lg p-4 mb-4">
+                            <pre class="text-sm text-neutral-dark"><code>// 调用实体搜索接口
+async function searchEntity() {
+  try {
+    const result = await kgClient.searchEntity('糖尿病');
+    console.log(result);
+  } catch (error) {
+    console.error(error);
+  }
+}</code></pre>
+                        </div>
+                        <a href="api-docs.html" class="text-primary font-medium inline-flex items-center">
+                            查看API示例 <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 总结与展望 -->
+    <section class="py-16 bg-gradient-to-r from-primary to-primary/80 text-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-6">医学知识图谱 - 智能医疗的未来</h2>
+                <p class="text-xl text-white/90 mb-10">我们的医学知识图谱为医疗机构、研究人员和开发者提供了强大的知识服务能力，助力医疗智能化转型，提升医疗服务质量和效率。</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition-custom">
+                        <i class="fa fa-lightbulb-o text-4xl mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">持续创新</h3>
+                        <p class="text-white/80">不断优化算法，提升知识提取和推理能力</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition-custom">
+                        <i class="fa fa-graduation-cap text-4xl mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">专业支持</h3>
+                        <p class="text-white/80">提供专业的技术支持和知识服务</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition-custom">
+                        <i class="fa fa-handshake-o text-4xl mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">合作共赢</h3>
+                        <p class="text-white/80">与医疗机构和研究机构深度合作，共同发展</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral-dark text-white py-12">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center space-x-2 mb-4">
+                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                        <i class="fa fa-heartbeat text-primary text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold">医疗AI开放平台</span>
+                </div>
+                <p class="text-neutral-light max-w-2xl mx-auto">赋能医疗创新，助力智能医疗发展，提供专业的医疗AI能力服务。</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">核心能力</h3>
+                    <ul class="space-y-2">
+                        <li><a href="text-analysis.html" class="text-neutral-light hover:text-white transition-custom">医学文本分析</a></li>
+                        <li><a href="image-analysis.html" class="text-neutral-light hover:text-white transition-custom">医学影像智能分析</a></li>
+                        <li><a href="chatbot.html" class="text-neutral-light hover:text-white transition-custom">智能问诊与对话</a></li>
+                        <li><a href="research-assistant.html" class="text-neutral-light hover:text-white transition-custom">医学科研助手</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">资源中心</h3>
+                    <ul class="space-y-2">
+                        <li><a href="api-docs.html" class="text-neutral-light hover:text-white transition-custom">API文档</a></li>
+                        <li><a href="user-guide.html" class="text-neutral-light hover:text-white transition-custom">使用指南</a></li>
+                        <li><a href="faq.html" class="text-neutral-light hover:text-white transition-custom">常见问题</a></li>
+                        <li><a href="news.html" class="text-neutral-light hover:text-white transition-custom">技术动态</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">关于我们</h3>
+                    <ul class="space-y-2">
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">平台介绍</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">解决方案</a></li>
+                        <li><a href="education.html" class="text-neutral-light hover:text-white transition-custom">教育培训</a></li>
+                        <li><a href="privacy-policy.html" class="text-neutral-light hover:text-white transition-custom">隐私政策</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-neutral-light/10 text-center text-neutral-light">
+                <p>&copy; 2023 医疗AI能力开放中心. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 z-50">
+        <i class="fa fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // 页面加载完成后的动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('opacity-100');
+            document.body.classList.remove('opacity-0');
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 10) {
+                    navbar.classList.add('shadow-md');
+                    navbar.classList.remove('shadow-sm');
+                } else {
+                    navbar.classList.remove('shadow-md');
+                    navbar.classList.add('shadow-sm');
+                }
+            });
+            
+            // 移动端菜单切换
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                    
+                    // 关闭移动端菜单
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+            
+            // 回到顶部按钮
+            const backToTopButton = document.getElementById('back-to-top');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.remove('opacity-0', 'invisible');
+                    backToTopButton.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopButton.classList.add('opacity-0', 'invisible');
+                    backToTopButton.classList.remove('opacity-100', 'visible');
+                }
+            });
+            
+            backToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // 初始化知识图谱可视化（静态展示）
+            const visualizationContainer = document.getElementById('knowledge-graph-visualization');
+            if (visualizationContainer) {
+                createKnowledgeGraphVisualization(visualizationContainer);
+            }
+            
+            // 搜索按钮点击事件
+            const searchButton = document.getElementById('search-button');
+            const searchTerm = document.getElementById('search-term');
+            const searchResults = document.getElementById('search-results');
+            const interactiveGraphContainer = document.getElementById('interactive-graph-container');
+            
+            if (searchButton && searchTerm && searchResults && interactiveGraphContainer) {
+                searchButton.addEventListener('click', function() {
+                    const term = searchTerm.value.trim();
+                    if (term) {
+                        // 模拟搜索结果
+                        simulateSearchResults(term, searchResults, interactiveGraphContainer);
+                    }
+                });
+                
+                // 回车键搜索
+                searchTerm.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchButton.click();
+                    }
+                });
+            }
+            
+            // 初始化图表
+            initCharts();
+            
+            // 联系表单提交处理
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // 模拟表单提交成功
+                    alert('感谢您的咨询，我们将尽快与您联系！');
+                    contactForm.reset();
+                });
+            }
+        });
+        
+        // 创建知识图谱可视化（静态展示）
+        function createKnowledgeGraphVisualization(container) {
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
+            
+            // 清除容器内容
+            container.innerHTML = '';
+            
+            // 生成节点数据（模拟）
+            const nodes = [
+                { id: 1, label: '糖尿病', type: 'disease', x: width/2, y: height/2, color: '#165DFF' },
+                { id: 2, label: '胰岛素', type: 'drug', x: width/2 - 150, y: height/2 - 80, color: '#0FC6C2' },
+                { id: 3, label: '血糖监测', type: 'examination', x: width/2 + 150, y: height/2 - 80, color: '#722ED1' },
+                { id: 4, label: '多饮', type: 'symptom', x: width/2 - 100, y: height/2 + 100, color: '#FF7D00' },
+                { id: 5, label: '多食', type: 'symptom', x: width/2, y: height/2 + 130, color: '#FF7D00' },
+                { id: 6, label: '多尿', type: 'symptom', x: width/2 + 100, y: height/2 + 100, color: '#FF7D00' },
+                { id: 7, label: '肥胖', type: 'riskFactor', x: width/2 - 180, y: height/2 + 50, color: '#F53F3F' },
+                { id: 8, label: '遗传', type: 'riskFactor', x: width/2 + 180, y: height/2 + 50, color: '#F53F3F' }
+            ];
+            
+            // 创建节点元素
+            nodes.forEach(node => {
+                const nodeElement = document.createElement('div');
+                nodeElement.className = 'graph-node';
+                nodeElement.style.left = `${node.x}px`;
+                nodeElement.style.top = `${node.y}px`;
+                nodeElement.style.width = '80px';
+                nodeElement.style.height = '80px';
+                nodeElement.style.backgroundColor = `${node.color}20`;
+                nodeElement.style.borderColor = node.color;
+                nodeElement.style.border = `2px solid ${node.color}`;
+                nodeElement.innerHTML = `<span style="color: ${node.color}; font-size: 12px; text-align: center;">${node.label}</span>`;
+                
+                // 添加动画效果
+                nodeElement.style.opacity = '0';
+                nodeElement.style.transform = 'scale(0.5)';
+                
+                container.appendChild(nodeElement);
+                
+                // 触发动画
+                setTimeout(() => {
+                    nodeElement.style.opacity = '1';
+                    nodeElement.style.transform = 'scale(1)';
+                }, 100);
+            });
+            
+            // 可以添加连接线的渲染逻辑
+        }
+        
+        // 模拟搜索结果
+        function simulateSearchResults(term, resultsContainer, graphContainer) {
+            // 清空之前的结果
+            resultsContainer.innerHTML = '';
+            
+            // 模拟查询结果
+            const mockResults = [
+                {
+                    type: '疾病',
+                    relatedTerm: '2型糖尿病',
+                    relation: '亚型',
+                    description: '最常见的糖尿病类型，通常在成人中发病，与胰岛素抵抗有关'
+                },
+                {
+                    type: '药物',
+                    relatedTerm: '二甲双胍',
+                    relation: '治疗药物',
+                    description: '2型糖尿病的一线治疗药物，能够减少肝脏葡萄糖的产生'
+                },
+                {
+                    type: '症状',
+                    relatedTerm: '视力模糊',
+                    relation: '常见症状',
+                    description: '高血糖引起的晶状体肿胀导致的视力暂时性变化'
+                },
+                {
+                    type: '检查',
+                    relatedTerm: '糖化血红蛋白',
+                    relation: '监测指标',
+                    description: '反映过去2-3个月的平均血糖水平，是评估血糖控制的重要指标'
+                }
+            ];
+            
+            // 渲染结果列表
+            mockResults.forEach((result, index) => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'p-3 bg-neutral-light rounded-lg';
+                resultItem.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="inline-block px-2 py-1 bg-primary/10 text-primary rounded text-xs font-medium">${result.type}</span>
+                        <span class="text-xs text-neutral">${result.relation}</span>
+                    </div>
+                    <h4 class="font-medium mb-1">${result.relatedTerm}</h4>
+                    <p class="text-sm text-neutral">${result.description}</p>
+                `;
+                
+                // 添加动画效果
+                resultItem.style.opacity = '0';
+                resultItem.style.transform = 'translateY(10px)';
+                resultItem.style.transition = `opacity 0.3s ease, transform 0.3s ease ${index * 0.1}s`;
+                
+                resultsContainer.appendChild(resultItem);
+                
+                // 触发动画
+                setTimeout(() => {
+                    resultItem.style.opacity = '1';
+                    resultItem.style.transform = 'translateY(0)';
+                }, 100);
+            });
+            
+            // 更新知识图谱可视化
+            updateInteractiveGraph(term, graphContainer);
+        }
+        
+        // 更新交互式知识图谱
+        function updateInteractiveGraph(term, container) {
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
+            
+            // 清除容器内容
+            container.innerHTML = '';
+            
+            // 生成基于搜索词的节点数据
+            const nodes = [
+                { id: 1, label: term, type: 'disease', x: width/2, y: height/2, color: '#165DFF', size: 100 },
+                { id: 2, label: '诊断', type: 'examination', x: width/2 - 180, y: height/2 - 100, color: '#722ED1', size: 80 },
+                { id: 3, label: '治疗', type: 'treatment', x: width/2 + 180, y: height/2 - 100, color: '#0FC6C2', size: 80 },
+                { id: 4, label: '预防', type: 'prevention', x: width/2 - 180, y: height/2 + 100, color: '#FF7D00', size: 80 },
+                { id: 5, label: '并发症', type: 'complication', x: width/2 + 180, y: height/2 + 100, color: '#F53F3F', size: 80 },
+                { id: 6, label: '指南', type: 'guideline', x: width/2, y: height/2 - 180, color: '#165DFF', size: 70 },
+                { id: 7, label: '最新研究', type: 'research', x: width/2, y: height/2 + 180, color: '#722ED1', size: 70 }
+            ];
+            
+            // 创建节点元素
+            nodes.forEach((node, index) => {
+                const nodeElement = document.createElement('div');
+                nodeElement.className = 'graph-node';
+                nodeElement.style.left = `${node.x}px`;
+                nodeElement.style.top = `${node.y}px`;
+                nodeElement.style.width = `${node.size}px`;
+                nodeElement.style.height = `${node.size}px`;
+                nodeElement.style.backgroundColor = `${node.color}20`;
+                nodeElement.style.borderColor = node.color;
+                nodeElement.style.border = `2px solid ${node.color}`;
+                nodeElement.innerHTML = `<span style="color: ${node.color}; font-size: 14px; text-align: center;">${node.label}</span>`;
+                
+                // 添加悬停效果
+                nodeElement.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = `${node.color}40`;
+                    this.style.zIndex = '10';
+                });
+                
+                nodeElement.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = `${node.color}20`;
+                    this.style.zIndex = '1';
+                });
+                
+                // 添加点击事件
+                nodeElement.addEventListener('click', function() {
+                    alert(`您点击了: ${node.label} (${node.type})`);
+                });
+                
+                // 添加动画效果
+                nodeElement.style.opacity = '0';
+                nodeElement.style.transform = 'scale(0.5)';
+                
+                container.appendChild(nodeElement);
+                
+                // 触发动画
+                setTimeout(() => {
+                    nodeElement.style.opacity = '1';
+                    nodeElement.style.transform = 'scale(1)';
+                }, 100 + index * 50);
+            });
+        }
+        
+        // 初始化图表
+        function initCharts() {
+            // 知识图谱组成图表
+            const compositionCtx = document.getElementById('knowledge-composition-chart');
+            if (compositionCtx) {
+                new Chart(compositionCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['疾病', '药物', '症状', '检查', '治疗方案', '风险因素'],
+                        datasets: [{
+                            data: [25, 20, 15, 15, 15, 10],
+                            backgroundColor: [
+                                '#165DFF',
+                                '#0FC6C2',
+                                '#722ED1',
+                                '#FF7D00',
+                                '#F53F3F',
+                                '#86909C'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right'
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 知识增长率图表
+            const growthCtx = document.getElementById('knowledge-growth-chart');
+            if (growthCtx) {
+                new Chart(growthCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2018', '2019', '2020', '2021', '2022', '2023'],
+                        datasets: [{
+                            label: '实体数量（万）',
+                            data: [50, 80, 120, 150, 180, 200],
+                            borderColor: '#165DFF',
+                            backgroundColor: 'rgba(22, 93, 255, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: '关系数量（百万）',
+                            data: [10, 18, 25, 35, 45, 50],
+                            borderColor: '#0FC6C2',
+                            backgroundColor: 'rgba(15, 198, 194, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        // 监听窗口大小变化，重新渲染知识图谱
+        window.addEventListener('resize', function() {
+            const visualizationContainer = document.getElementById('knowledge-graph-visualization');
+            if (visualizationContainer) {
+                createKnowledgeGraphVisualization(visualizationContainer);
+            }
+            
+            const searchTerm = document.getElementById('search-term');
+            const interactiveGraphContainer = document.getElementById('interactive-graph-container');
+            if (searchTerm && searchTerm.value.trim() && interactiveGraphContainer) {
+                updateInteractiveGraph(searchTerm.value.trim(), interactiveGraphContainer);
+            }
+        });
+        
+        // 添加页面滚动时的元素动画
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.knowledge-card, .hover-lift');
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementPosition < windowHeight - 100) {
+                    element.classList.add('opacity-100', 'transform-none');
+                    element.classList.remove('opacity-0', 'translate-y-8');
+                }
+            });
+        };
+        
+        // 初始设置动画类
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.knowledge-card, .hover-lift');
+            animatedElements.forEach(element => {
+                element.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-700');
+            });
+            
+            // 初始触发一次动画
+            animateOnScroll();
+        });
+        
+        // 监听滚动事件
+        window.addEventListener('scroll', animateOnScroll);
+    </script>
+</body>
+</html>

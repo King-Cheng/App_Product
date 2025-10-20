@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常见问题 - 医疗AI能力开放中心</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- 配置Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0FC6C2',
+                        accent: '#722ED1',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        neutral: '#86909C',
+                        'neutral-light': '#F2F3F5',
+                        'neutral-dark': '#4E5969'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+            .hover-lift {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .hover-lift:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px -5px rgba(22, 93, 255, 0.1);
+            }
+            .faq-item {
+                @apply bg-white border border-neutral-200 rounded-xl mb-4 overflow-hidden;
+            }
+            .faq-question {
+                @apply flex justify-between items-center w-full px-6 py-4 text-left font-semibold cursor-pointer transition-custom hover:bg-primary/5;
+            }
+            .faq-answer {
+                @apply px-6 py-0 max-h-0 overflow-hidden transition-all duration-300 ease-in-out;
+            }
+            .faq-item.active .faq-answer {
+                @apply py-4 max-h-[500px];
+            }
+            .faq-item.active .faq-question i {
+                @apply transform rotate-180;
+            }
+            .faq-category {
+                @apply bg-white border border-neutral-200 rounded-xl p-1 flex flex-wrap gap-1 mb-8;
+            }
+            .faq-category-btn {
+                @apply px-4 py-2 rounded-lg text-sm transition-custom whitespace-nowrap;
+            }
+            .faq-category-btn.active {
+                @apply bg-primary text-white;
+            }
+            .faq-category-btn:not(.active) {
+                @apply text-neutral-dark hover:bg-primary/10;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white font-sans text-neutral-dark opacity-0 transition-opacity duration-500">
+    <!-- 导航栏 -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fa fa-heartbeat text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold text-neutral-dark">医疗AI开放平台</span>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-neutral-dark hover:text-primary transition-custom">首页</a>
+                <div class="relative group">
+                    <a href="#" class="text-neutral-dark hover:text-primary transition-custom flex items-center space-x-1">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute left-0 mt-2 w-64 bg-white shadow-lg rounded-lg overflow-hidden z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform -translate-y-2 group-hover:translate-y-0">
+                        <a href="text-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学文本分析</a>
+                        <a href="image-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block px-4 py-3 hover:bg-neutral-light">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block px-4 py-3 hover:bg-neutral-light">医学科研助手</a>
+                        <a href="education.html" class="block px-4 py-3 hover:bg-neutral-light">医学教育辅助</a>
+                        <a href="management-decision.html" class="block px-4 py-3 hover:bg-neutral-light">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="text-neutral-dark hover:text-primary transition-custom">解决方案</a>
+                <a href="api-docs.html" class="text-neutral-dark hover:text-primary transition-custom">API文档</a>
+                <a href="news.html" class="text-neutral-dark hover:text-primary transition-custom">新闻动态</a>
+                    <a href="ai-results-dashboard.html" class="text-neutral-dark hover:text-primary transition-custom">统计面板</a>
+                <a href="faq.html" class="text-primary font-medium">常见问题</a>
+                <a href="about.html" class="text-neutral-dark hover:text-primary transition-custom">关于我们</a>
+            </nav>
+            
+            <!-- 按钮组 -->
+            <div class="flex items-center space-x-4">
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-button" class="md:hidden text-neutral-dark">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="index.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">首页</a>
+                <div class="relative">
+                    <button class="flex items-center justify-between w-full py-2 px-4 hover:bg-neutral-light rounded-lg">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </button>
+                    <div class="pl-4 mt-2 space-y-2 border-l-2 border-primary">
+                        <a href="text-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学文本分析</a>
+                        <a href="image-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block py-2 hover:bg-neutral-light rounded-lg">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学科研助手</a>
+                        <a href="education.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学教育辅助</a>
+                        <a href="management-decision.html" class="block py-2 hover:bg-neutral-light rounded-lg">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">解决方案</a>
+                <a href="api-docs.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">API文档</a>
+                <a href="news.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">新闻动态</a>
+                <a href="ai-results-dashboard.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">统计面板</a>
+                <a href="faq.html" class="py-2 px-4 bg-primary/10 text-primary font-medium rounded-lg">常见问题</a>
+                <a href="about.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 页面标题区域 -->
+    <section class="pt-28 pb-16 bg-gradient-to-r from-primary/5 to-primary/10">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-3xl mx-auto text-center">
+                <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-neutral-dark leading-tight mb-4">常见问题</h1>
+                <p class="text-lg text-neutral mb-8">解答您关于医疗AI开放平台的疑问</p>
+                
+                <!-- 搜索框 -->
+                <div class="relative max-w-2xl mx-auto">
+                    <input type="text" id="faq-search" class="w-full pl-12 pr-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm" placeholder="搜索问题...">
+                    <i class="fa fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 常见问题内容 -->
+    <section class="py-16 bg-neutral-light">
+        <div class="container mx-auto px-4 md:px-6">
+            <!-- 问题分类 -->
+            <div class="faq-category">
+                <button class="faq-category-btn active" data-category="all">全部问题</button>
+                <button class="faq-category-btn" data-category="general">平台介绍</button>
+                <button class="faq-category-btn" data-category="api">API使用</button>
+                <button class="faq-category-btn" data-category="pricing">定价计费</button>
+                <button class="faq-category-btn" data-category="technical">技术支持</button>
+                <button class="faq-category-btn" data-category="security">数据安全</button>
+            </div>
+            
+            <!-- FAQ内容 -->
+            <div class="max-w-3xl mx-auto">
+                <!-- 通用问题 -->
+                <div class="faq-item" data-category="general">
+                    <div class="faq-question">
+                        <span>医疗AI开放平台是什么？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">医疗AI开放平台是一个专注于医疗领域的人工智能能力开放服务平台，旨在为医疗机构、开发者和科研人员提供高质量的医疗AI算法和API接口。平台涵盖医学文本分析、医学影像智能分析、智能问诊与对话、医学科研助手等多项核心能力，帮助用户快速集成AI技术，提升医疗服务效率和质量。</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="general">
+                    <div class="faq-question">
+                        <span>平台提供哪些核心能力？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">医疗AI开放平台提供以下核心能力：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li>医学文本分析：病历分析、医学术语标准化、临床路径推荐</li>
+                            <li>医学影像智能分析：CT、MRI、X光、超声、病理切片、眼底影像等多种影像类型的智能识别与诊断</li>
+                            <li>智能问诊与对话：患者症状采集、初步诊断建议、健康管理指导</li>
+                            <li>医学科研助手：文献智能分析、实验设计辅助、数据统计分析</li>
+                            <li>医学教育辅助：虚拟病例学习、个性化学习路径、医学知识图谱</li>
+                            <li>医疗管理决策支持：运营效率分析、资源优化配置、预测性分析</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="general">
+                    <div class="faq-question">
+                        <span>平台适用于哪些用户？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">医疗AI开放平台适用于以下用户：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li>医疗机构：医院、诊所、社区卫生服务中心等</li>
+                            <li>医疗科技企业：医疗软件开发商、智能医疗设备制造商</li>
+                            <li>医学教育机构：医学院校、培训机构</li>
+                            <li>医学研究人员：科研院所、高校教师和学生</li>
+                            <li>医疗APP开发者：健康管理、在线问诊等应用开发者</li>
+                            <li>保险公司：医疗保险、健康保险提供商</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- API使用 -->
+                <div class="faq-item" data-category="api">
+                    <div class="faq-question">
+                        <span>如何开始使用平台的API？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">使用医疗AI开放平台的API非常简单，只需以下几个步骤：</p>
+                        <ol class="list-decimal list-inside ml-4 mt-2 space-y-1">
+                            <li>在平台注册账号并完成实名认证</li>
+                            <li>登录后在控制台创建应用，获取API密钥</li>
+                            <li>参考<a href="api-docs.html" class="text-primary hover:underline">API文档</a>了解各接口的使用方法</li>
+                            <li>使用您的API密钥调用相应接口</li>
+                            <li>根据返回结果进行业务处理</li>
+                        </ol>
+                        <p class="mt-2 text-neutral">我们还提供多种开发语言的SDK，帮助您快速集成。</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="api">
+                    <div class="faq-question">
+                        <span>API的调用频率有限制吗？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">是的，为了保证服务质量和公平使用，平台对API调用频率有一定限制。具体限制如下：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li>免费用户：每分钟60次调用，每天1000次调用</li>
+                            <li>标准用户：每分钟300次调用，每天10000次调用</li>
+                            <li>企业用户：每分钟1000次调用，每天100000次调用</li>
+                        </ul>
+                        <p class="mt-2 text-neutral">如果您的业务需求超出上述限制，可以联系我们申请更高的调用额度。</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="api">
+                    <div class="faq-question">
+                        <span>如何处理API调用错误？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">当API调用出错时，平台会返回相应的错误码和错误信息。您可以：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li>查看返回的错误码，对照<a href="api-docs.html" class="text-primary hover:underline">API文档</a>中的错误码说明</li>
+                            <li>检查您的请求参数是否正确</li>
+                            <li>确认您的API密钥是否有效且未过期</li>
+                            <li>检查您的调用频率是否超过限制</li>
+                            <li>如问题持续，请联系技术支持团队</li>
+                        </ul>
+                        <p class="mt-2 text-neutral">建议在代码中添加错误处理逻辑，以便更好地应对各种异常情况。</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="api">
+                    <div class="faq-question">
+                        <span>平台是否提供SDK？支持哪些编程语言？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">是的，我们提供多种编程语言的SDK，以便开发者更便捷地集成我们的API。目前支持的编程语言包括：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li>Python</li>
+                            <li>Java</li>
+                            <li>JavaScript (Node.js)</li>
+                            <li>PHP</li>
+                            <li>Go</li>
+                            <li>C#</li>
+                        </ul>
+                        <p class="mt-2 text-neutral">您可以在API文档页面下载各语言的SDK，以及查看相应的使用示例。</p>
+                    </div>
+                </div>
+                
+                <!-- 定价计费 -->
+                <div class="faq-item" data-category="pricing">
+                    <div class="faq-question">
+                        <span>平台的收费标准是什么？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">医疗AI开放平台采用阶梯式定价策略，根据不同用户需求提供多种套餐：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li><strong>免费版</strong>：提供基础API调用额度，适合个人开发者学习和测试</li>
+                            <li><strong>标准版</strong>：每月999元，包含更多API调用次数和部分高级功能</li>
+                            <li><strong>企业版</strong>：根据需求定制，提供无限API调用、专属技术支持和企业级安全保障</li>
+                        </ul>
+                        <p class="mt-2 text-neutral">详细的价格信息和套餐内容请查看<a href="#" class="text-primary hover:underline">定价页面</a>，或联系我们的销售顾问获取定制方案。</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="pricing">
+                    <div class="faq-question">
+                        <span>如何付费和管理账单？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">在医疗AI开放平台，您可以通过以下方式付费和管理账单：</p>
+                        <ol class="list-decimal list-inside ml-4 mt-2 space-y-1">
+                            <li>登录平台控制台，进入"计费管理"页面</li>
+                            <li>选择您需要的套餐，支持支付宝、微信支付和企业对公转账</li>
+                            <li>设置自动续费或手动续费</li>
+                            <li>查看历史账单和消费明细</li>
+                            <li>下载发票（支持增值税专用发票和普通发票）</li>
+                        </ol>
+                        <p class="mt-2 text-neutral">如您有特殊的付费需求或账单问题，请联系我们的财务团队协助处理。</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="pricing">
+                    <div class="faq-question">
+                        <span>是否提供试用服务？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">是的，我们为新注册用户提供免费试用服务。具体内容如下：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li>新用户注册后可获得7天免费试用企业版的机会</li>
+                            <li>试用期间可体验所有高级功能和API接口</li>
+                            <li>API调用额度限制为每天5000次</li>
+                            <li>试用到期后自动转为免费版，不影响您的数据和已创建的应用</li>
+                        </ul>
+                        <p class="mt-2 text-neutral">如需延长试用期或增加试用额度，请联系我们的客户成功经理。</p>
+                    </div>
+                </div>
+                
+                <!-- 技术支持 -->
+                <div class="faq-item" data-category="technical">
+                    <div class="faq-question">
+                        <span>平台提供哪些技术支持方式？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">医疗AI开放平台提供多种技术支持方式，确保您在使用过程中获得及时帮助：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li><strong>文档中心</strong>：提供详细的API文档、开发指南和常见问题解答</li>
+                            <li><strong>在线客服</strong>：工作日9:00-18:00提供实时在线咨询</li>
+                            <li><strong>技术支持邮箱</strong>：support@medicalaicloud.com</li>
+                            <li><strong>企业用户专属</strong>：提供7x24小时电话支持和专属技术顾问</li>
+                            <li><strong>开发者社区</strong>：与其他开发者交流经验和解决方案</li>
+                        </ul>
+                        <p class="mt-2 text-neutral">我们的技术支持团队由医疗AI领域的专家组成，能够为您提供专业的解答和建议。</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="technical">
+                    <div class="faq-question">
+                        <span>如何优化API调用性能？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">要优化API调用性能，您可以考虑以下几点建议：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li><strong>批量处理</strong>：尽可能使用批量API，减少请求次数</li>
+                            <li><strong>缓存结果</strong>：对于频繁使用且不常变化的数据，实现本地缓存</li>
+                            <li><strong>异步处理</strong>：对于耗时的操作，使用异步调用和回调机制</li>
+                            <li><strong>错误重试</strong>：实现智能重试机制，处理临时网络问题</li>
+                            <li><strong>选择合适的数据格式</strong>：使用JSON时，仅请求必要的字段</li>
+                            <li><strong>就近接入</strong>：选择离您服务器最近的API接入点</li>
+                        </ul>
+                        <p class="mt-2 text-neutral">我们也提供性能优化的最佳实践文档，欢迎参考。</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="technical">
+                    <div class="faq-question">
+                        <span>如何报告API问题或提交功能建议？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">我们非常欢迎用户反馈问题和提供功能建议，您可以通过以下方式：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li>在控制台提交工单，详细描述问题或建议</li>
+                            <li>发送邮件至feedback@medicalaicloud.com</li>
+                            <li>参与开发者社区的讨论和投票</li>
+                            <li>企业用户可联系专属技术顾问</li>
+                        </ul>
+                        <p class="mt-2 text-neutral">对于重要的问题和有价值的建议，我们会优先处理并给予及时回复。我们的产品路线图也会考虑用户的反馈意见。</p>
+                    </div>
+                </div>
+                
+                <!-- 数据安全 -->
+                <div class="faq-item" data-category="security">
+                    <div class="faq-question">
+                        <span>平台如何保障数据安全？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">医疗AI开放平台高度重视数据安全，采取了多层次的安全措施：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li><strong>数据加密</strong>：传输过程中采用HTTPS/TLS加密，存储数据采用AES-256加密</li>
+                            <li><strong>访问控制</strong>：严格的身份验证和授权机制，基于角色的访问控制</li>
+                            <li><strong>合规认证</strong>：符合HIPAA、GDPR、等医疗数据安全标准</li>
+                            <li><strong>审计日志</strong>：全面记录所有数据访问和操作日志</li>
+                            <li><strong>数据隔离</strong>：多租户架构，确保用户数据相互隔离</li>
+                            <li><strong>灾备机制</strong>：多重备份和异地容灾，确保数据可靠性</li>
+                        </ul>
+                        <p class="mt-2 text-neutral">我们定期进行安全审计和渗透测试，持续提升平台的安全性。</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="security">
+                    <div class="faq-question">
+                        <span>用户数据如何使用？会被用于训练模型吗？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">医疗AI开放平台对用户数据的使用有严格的规范和限制：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li>用户提交的数据仅用于处理API请求，提供相应的服务</li>
+                            <li>默认情况下，用户数据不会被用于训练模型或其他目的</li>
+                            <li>如需使用匿名化或去标识化的数据进行模型优化，必须获得用户的明确授权</li>
+                            <li>我们遵循最小必要原则，仅收集和使用提供服务所必需的数据</li>
+                            <li>用户有权随时删除其提交的数据</li>
+                        </ul>
+                        <p class="mt-2 text-neutral">详细的数据使用政策请参考我们的<a href="#" class="text-primary hover:underline">隐私政策</a>。</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item" data-category="security">
+                    <div class="faq-question">
+                        <span>如何保护API密钥安全？</span>
+                        <i class="fa fa-chevron-down text-neutral transition-transform duration-300"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p class="text-neutral">保护API密钥安全非常重要，建议您采取以下措施：</p>
+                        <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+                            <li>不要在代码、配置文件或版本控制系统中硬编码API密钥</li>
+                            <li>使用环境变量或专门的密钥管理服务存储API密钥</li>
+                            <li>定期更换API密钥，特别是当您的团队成员变动时</li>
+                            <li>为不同的应用或服务使用不同的API密钥，便于权限管理和问题追踪</li>
+                            <li>设置合理的API密钥权限范围，遵循最小权限原则</li>
+                            <li>监控API密钥的使用情况，及时发现异常访问</li>
+                        </ul>
+                        <p class="mt-2 text-neutral">如发现API密钥泄露，请立即在控制台禁用该密钥并生成新的密钥。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 未找到答案？ -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-2xl font-bold text-neutral-dark mb-4">没有找到您需要的答案？</h2>
+                <p class="text-neutral mb-8">我们的技术支持团队随时为您提供帮助</p>
+                
+                <div class="flex flex-col md:flex-row justify-center gap-4">
+                    <a href="#" class="inline-flex items-center justify-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom">
+                        <i class="fa fa-headphones mr-2"></i>
+                        联系技术支持
+                    </a>
+                    <a href="#" class="inline-flex items-center justify-center px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary/5 transition-custom">
+                        <i class="fa fa-file-text-o mr-2"></i>
+                        查看API文档
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral-dark text-white pt-16 pb-8">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                            <i class="fa fa-heartbeat text-primary text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold">医疗AI开放平台</span>
+                    </div>
+                    <p class="text-neutral-light mb-4">赋能医疗创新，助力智能医疗发展，提供专业的医疗AI能力服务。</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-weixin text-xl"></i></a>
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-weibo text-xl"></i></a>
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-github text-xl"></i></a>
+                        <a href="#" class="text-neutral-light hover:text-white transition-custom"><i class="fa fa-linkedin text-xl"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">产品服务</h3>
+                    <ul class="space-y-2">
+                        <li><a href="text-analysis.html" class="text-neutral-light hover:text-white transition-custom">医学文本分析</a></li>
+                        <li><a href="image-analysis.html" class="text-neutral-light hover:text-white transition-custom">医学影像智能分析</a></li>
+                        <li><a href="chatbot.html" class="text-neutral-light hover:text-white transition-custom">智能问诊与对话</a></li>
+                        <li><a href="research-assistant.html" class="text-neutral-light hover:text-white transition-custom">医学科研助手</a></li>
+                        <li><a href="education.html" class="text-neutral-light hover:text-white transition-custom">医学教育辅助</a></li>
+                        <li><a href="management-decision.html" class="text-neutral-light hover:text-white transition-custom">医疗管理决策支持</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">解决方案</h3>
+                    <ul class="space-y-2">
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">智慧医院解决方案</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">基层医疗AI赋能</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">医学教育智能化</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">医学科研加速器</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">医院运营智能决策</a></li>
+                        <li><a href="solutions.html" class="text-neutral-light hover:text-white transition-custom">智慧健康管理平台</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">关于我们</h3>
+                    <ul class="space-y-2">
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">公司介绍</a></li>
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">核心团队</a></li>
+                        <li><a href="news.html" class="text-neutral-light hover:text-white transition-custom">新闻动态</a></li>
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">加入我们</a></li>
+                        <li><a href="about.html" class="text-neutral-light hover:text-white transition-custom">联系我们</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-neutral-light/10 text-center text-neutral-light">
+                <p>&copy; 2023 医疗AI能力开放中心. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 回到顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 z-50">
+        <i class="fa fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // 页面加载完成后的动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('opacity-100');
+            document.body.classList.remove('opacity-0');
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 10) {
+                    navbar.classList.add('shadow-md');
+                    navbar.classList.remove('shadow-sm');
+                } else {
+                    navbar.classList.remove('shadow-md');
+                    navbar.classList.add('shadow-sm');
+                }
+            });
+            
+            // 移动端菜单切换
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                    
+                    // 关闭移动端菜单
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+            
+            // 回到顶部按钮
+            const backToTopButton = document.getElementById('back-to-top');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.remove('opacity-0', 'invisible');
+                    backToTopButton.classList.add('opacity-100', 'visible');
+                } else {
+                    backToTopButton.classList.add('opacity-0', 'invisible');
+                    backToTopButton.classList.remove('opacity-100', 'visible');
+                }
+            });
+            
+            backToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            
+            // FAQ手风琴效果
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', function() {
+                    const faqItem = this.parentElement;
+                    faqItem.classList.toggle('active');
+                });
+            });
+            
+            // FAQ分类筛选
+            const categoryButtons = document.querySelectorAll('.faq-category-btn');
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的激活状态
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // 添加当前按钮的激活状态
+                    this.classList.add('active');
+                    
+                    const category = this.getAttribute('data-category');
+                    
+                    // 筛选FAQ项目
+                    faqItems.forEach(item => {
+                        if (category === 'all' || item.getAttribute('data-category') === category) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                            // 关闭非当前分类的展开项
+                            if (item.classList.contains('active')) {
+                                item.classList.remove('active');
+                            }
+                        }
+                    });
+                });
+            });
+            
+            // FAQ搜索功能
+            const faqSearch = document.getElementById('faq-search');
+            if (faqSearch) {
+                faqSearch.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    
+                    faqItems.forEach(item => {
+                        const question = item.querySelector('.faq-question span').textContent.toLowerCase();
+                        const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                        
+                        if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                            // 关闭不匹配的展开项
+                            if (item.classList.contains('active')) {
+                                item.classList.remove('active');
+                            }
+                        }
+                    });
+                    
+                    // 当搜索框有内容时，显示所有分类的匹配项
+                    if (searchTerm) {
+                        categoryButtons.forEach(button => {
+                            button.classList.remove('active');
+                        });
+                    } else {
+                        // 搜索框为空时，恢复默认显示
+                        document.querySelector('.faq-category-btn[data-category="all"]').click();
+                    }
+                });
+            }
+            
+            // 添加FAQ项目的动画效果
+            faqItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧医教研管解决方案 - 应用成效全景视图</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0FC6C2',
+                        tertiary: '#722ED1',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        dark: '#1D2129',
+                        light: '#F2F3F5',
+                        'neutral-100': '#FFFFFF',
+                        'neutral-200': '#F7F8FA',
+                        'neutral-300': '#E5E6EB',
+                        'neutral-400': '#C9CDD4',
+                        'neutral-500': '#86909C',
+                        'neutral-600': '#4E5969',
+                        'neutral-700': '#272E3B',
+                        'neutral-800': '#1D2129',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 16px rgba(0, 0, 0, 0.08)',
+                        'medium': '0 8px 32px rgba(0, 0, 0, 0.12)',
+                        'strong': '0 16px 48px rgba(0, 0, 0, 0.16)',
+                    }
+                },
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-gradient-primary {
+                background: linear-gradient(135deg, #165DFF 0%, #0FC6C2 100%);
+            }
+            .bg-gradient-secondary {
+                background: linear-gradient(135deg, #722ED1 0%, #165DFF 100%);
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .scale-hover {
+                @apply hover:scale-105 transition-all duration-300;
+            }
+            .card-hover {
+                @apply hover:shadow-medium hover:-translate-y-1 transition-all duration-300;
+            }
+            .glass-effect {
+                @apply bg-white/80 backdrop-blur-md;
+            }
+            .gradient-border {
+                @apply relative border border-transparent bg-clip-padding;
+                background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, #165DFF, #0FC6C2);
+                background-origin: border-box;
+            }
+            .stat-card {
+                @apply bg-white rounded-xl p-6 shadow-soft hover:shadow-medium transition-shadow border border-neutral-200;
+            }
+            .stat-number {
+                @apply text-3xl md:text-4xl font-bold text-primary mb-2;
+            }
+            .stat-title {
+                @apply text-neutral-600 font-medium;
+            }
+            .kpi-card {
+                @apply bg-white rounded-xl p-6 shadow-soft border-l-4 border-primary;
+            }
+            .section-title {
+                @apply text-2xl md:text-3xl font-bold text-neutral-800 mb-2;
+            }
+            .section-subtitle {
+                @apply text-neutral-600 mb-8;
+            }
+            .quote-card {
+                @apply bg-white p-6 rounded-xl shadow-soft border border-neutral-200 relative;
+            }
+            .quote-icon {
+                @apply text-primary/20 text-6xl absolute -top-4 -left-2 opacity-50;
+            }
+            .highlight-card {
+                @apply bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-6 border border-primary/20;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-neutral-200 text-neutral-800 overflow-x-hidden">
+    <!-- 导航栏 -->
+    <header class="fixed top-0 left-0 right-0 bg-white shadow-sm z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="index.html" class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <i class="fa fa-heartbeat text-white text-xl"></i>
+                </div>
+                <span class="text-xl font-bold text-neutral-dark">医疗AI开放平台</span>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-neutral-dark hover:text-primary transition-custom">首页</a>
+                <div class="relative group">
+                    <a href="#" class="text-neutral-dark hover:text-primary transition-custom flex items-center space-x-1">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </a>
+                    <div class="absolute left-0 mt-2 w-64 bg-white shadow-lg rounded-lg overflow-hidden z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform -translate-y-2 group-hover:translate-y-0">
+                        <a href="text-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学文本分析</a>
+                        <a href="image-analysis.html" class="block px-4 py-3 hover:bg-neutral-light">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block px-4 py-3 hover:bg-neutral-light">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block px-4 py-3 hover:bg-neutral-light">医学科研助手</a>
+                        <a href="education.html" class="block px-4 py-3 hover:bg-neutral-light">医学教育辅助</a>
+                        <a href="management-decision.html" class="block px-4 py-3 hover:bg-neutral-light">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="text-neutral-dark hover:text-primary transition-custom">解决方案</a>
+                <a href="api-docs.html" class="text-neutral-dark hover:text-primary transition-custom">接口开发</a>
+                <a href="news.html" class="text-neutral-dark hover:text-primary transition-custom">新闻动态</a>
+                <a href="ai-results-dashboard.html" class="text-primary font-medium transition-custom">统计面板</a>
+                <a href="about.html" class="text-neutral-dark hover:text-primary transition-custom">关于我们</a>
+            </nav>
+            
+            <!-- 按钮组 -->
+            <div class="flex items-center space-x-4">
+                <!-- 移动端菜单按钮 -->
+                <button id="mobile-menu-button" class="md:hidden text-neutral-dark">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="index.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">首页</a>
+                <div class="relative">
+                    <button class="flex items-center justify-between w-full py-2 px-4 hover:bg-neutral-light rounded-lg">
+                        <span>核心能力</span>
+                        <i class="fa fa-chevron-down text-xs"></i>
+                    </button>
+                    <div class="pl-4 mt-2 space-y-2 border-l-2 border-primary hidden">
+                        <a href="text-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学文本分析</a>
+                        <a href="image-analysis.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学影像智能分析</a>
+                        <a href="chatbot.html" class="block py-2 hover:bg-neutral-light rounded-lg">智能问诊与对话</a>
+                        <a href="research-assistant.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学科研助手</a>
+                        <a href="education.html" class="block py-2 hover:bg-neutral-light rounded-lg">医学教育辅助</a>
+                        <a href="management-decision.html" class="block py-2 hover:bg-neutral-light rounded-lg">医疗管理决策支持</a>
+                    </div>
+                </div>
+                <a href="solutions.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">解决方案</a>
+                <a href="api-docs.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">接口开发</a>
+                <a href="news.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">新闻动态</a>
+                <a href="ai-results-dashboard.html" class="py-2 px-4 bg-primary/10 text-primary rounded-lg">统计面板</a>
+                <a href="about.html" class="py-2 px-4 hover:bg-neutral-light rounded-lg">关于我们</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 页面标题区域 -->
+    <section class="pt-32 pb-16 bg-gradient-to-b from-primary/5 to-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-[clamp(2rem,4vw,3rem)] font-bold leading-tight text-neutral-800 mb-6">
+                    智慧医教研管解决方案 - 应用成效全景视图
+                </h1>
+                <p class="text-[clamp(1rem,2vw,1.25rem)] text-neutral-600 mb-8 max-w-3xl mx-auto">
+                    北京三甲医院 (模拟数据2025年数据)
+                </p>
+                <div class="inline-flex items-center px-6 py-3 bg-primary text-white rounded-lg shadow-md hover:bg-primary/90 transition-colors">
+                    <i class="fa fa-line-chart mr-2"></i>
+                    <span>AI赋能医疗全场景</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 板块一：总体应用概览 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center mb-12">
+                <h2 class="section-title">总体应用概览</h2>
+                <p class="section-subtitle">AI技术在医院各环节的渗透与影响</p>
+            </div>
+            
+            <!-- 核心指标看板 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+                <div class="stat-card card-hover">
+                    <div class="stat-number">285,420</div>
+                    <div class="stat-title">AI服务总调用量</div>
+                    <div class="mt-4 flex items-center text-success text-sm">
+                        <i class="fa fa-arrow-up mr-1"></i>
+                        <span>月环比增长12.5%</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card card-hover">
+                    <div class="stat-number">148</div>
+                    <div class="stat-title">活跃用户数</div>
+                    <div class="mt-4 flex items-center text-neutral-600 text-sm">
+                        <i class="fa fa-users mr-1"></i>
+                        <span>覆盖全科95%以上医护人员</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card card-hover">
+                    <div class="stat-number">31.5%</div>
+                    <div class="stat-title">人均效率提升</div>
+                    <div class="mt-4 flex items-center text-success text-sm">
+                        <i class="fa fa-clock-o mr-1"></i>
+                        <span>基于任务完成时间测算</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card card-hover">
+                    <div class="stat-number">1,250,000</div>
+                    <div class="stat-title">知识库调用量</div>
+                    <div class="mt-4 flex items-center text-neutral-600 text-sm">
+                        <i class="fa fa-book mr-1"></i>
+                        <span>医学知识实时获取</span>
+                    </div>
+                </div>
+                
+                <div class="stat-card card-hover">
+                    <div class="stat-number">8</div>
+                    <div class="stat-title">接入业务系统</div>
+                    <div class="mt-4 flex items-center text-neutral-600 text-sm">
+                        <i class="fa fa-plug mr-1"></i>
+                        <span>全面融入医院工作流</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI能力调用分布图 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white rounded-xl p-6 shadow-soft">
+                    <h3 class="text-xl font-semibold mb-6 text-neutral-800">AI能力调用分布图</h3>
+                    <div class="h-80">
+                        <canvas id="aiCapabilityChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-soft">
+                    <h3 class="text-xl font-semibold mb-6 text-neutral-800">主要发现</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4 flex-shrink-0">
+                                <i class="fa fa-stethoscope"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-neutral-800 mb-2">诊疗深度融合</h4>
+                                <p class="text-neutral-600">临床辅助决策占比45%，说明AI已深度融入核心诊疗流程</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary mr-4 flex-shrink-0">
+                                <i class="fa fa-check-square-o"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-neutral-800 mb-2">质控编码自动化</h4>
+                                <p class="text-neutral-600">病历质控与编码占比25%，显著减轻医护人员文书负担</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary mr-4 flex-shrink-0">
+                                <i class="fa fa-line-chart"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-neutral-800 mb-2">科研创新加速</h4>
+                                <p class="text-neutral-600">科研与数据洞察占比15%，AI正在推动医学研究创新</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 板块二：临床应用成效 -->
+    <section class="py-16 bg-neutral-100">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center mb-12">
+                <h2 class="section-title">临床应用成效</h2>
+                <p class="section-subtitle">提升医疗质量与效率的AI赋能</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                <!-- 核心场景指标 -->
+                <div class="bg-white rounded-xl p-6 shadow-soft">
+                    <h3 class="text-xl font-semibold mb-6 text-neutral-800">核心场景指标</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between pb-4 border-b border-neutral-200">
+                            <div>
+                                <h4 class="font-medium text-neutral-800">AI辅助诊断建议调用</h4>
+                                <p class="text-neutral-600 text-sm">医生在诊断过程中使用AI辅助的次数</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-primary">68,500</div>
+                                <div class="text-success text-sm">+18.2% 较上月</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between pb-4 border-b border-neutral-200">
+                            <div>
+                                <h4 class="font-medium text-neutral-800">诊断符合率提升</h4>
+                                <p class="text-neutral-600 text-sm">对比AI使用前后的诊断准确率</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-success">+5.2%</div>
+                                <div class="text-neutral-600 text-sm">基于专家审核评估</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between pb-4 border-b border-neutral-200">
+                            <div>
+                                <h4 class="font-medium text-neutral-800">平均病历书写时间减少</h4>
+                                <p class="text-neutral-600 text-sm">每份病历节省的时间</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-primary">15分钟</div>
+                                <div class="text-success text-sm">-38% 较AI使用前</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between pb-4 border-b border-neutral-200">
+                            <div>
+                                <h4 class="font-medium text-neutral-800">AI自动DRG编码准确率</h4>
+                                <p class="text-neutral-600 text-sm">AI推荐编码与专家编码的一致率</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-success">92%</div>
+                                <div class="text-neutral-600 text-sm">月准确率稳步提升</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-medium text-neutral-800">病历质控问题自动发现率</h4>
+                                <p class="text-neutral-600 text-sm">AI检测出的病历问题占比</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-success">98%</div>
+                                <div class="text-neutral-600 text-sm">远高于人工抽检率</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 用户见证 -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-semibold text-neutral-800">用户见证</h3>
+                    
+                    <div class="quote-card">
+                        <i class="fa fa-quote-left quote-icon"></i>
+                        <div class="relative z-10">
+                            <p class="text-neutral-700 italic mb-4">在疑难病例讨论前，用CDSS快速生成鉴别诊断清单，帮助我们拓宽了思路，避免了遗漏。</p>
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mr-4">
+                                    <i class="fa fa-user-md text-xl"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-neutral-800">张主任</div>
+                                    <div class="text-neutral-600 text-sm">主任医师</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quote-card">
+                        <i class="fa fa-quote-left quote-icon"></i>
+                        <div class="relative z-10">
+                            <p class="text-neutral-700 italic mb-4">AI质控能立刻指出我病历中的逻辑矛盾，比如'诊断高血压'但'血压值'未填，真是我们年轻医生的'守护神'。</p>
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center text-secondary mr-4">
+                                    <i class="fa fa-user-md text-xl"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-neutral-800">李医生</div>
+                                    <div class="text-neutral-600 text-sm">住院医师</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 临床应用趋势图 -->
+                    <div class="bg-white rounded-xl p-6 shadow-soft">
+                        <h4 class="font-medium text-neutral-800 mb-4">临床应用趋势</h4>
+                        <div class="h-48">
+                            <canvas id="clinicalTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 板块三：科研创新加速 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center mb-12">
+                <h2 class="section-title">科研创新加速</h2>
+                <p class="section-subtitle">AI赋能医学研究与创新</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <!-- 核心场景指标 -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white rounded-xl p-6 shadow-soft">
+                        <h3 class="text-xl font-semibold mb-6 text-neutral-800">核心场景指标</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between pb-4 border-b border-neutral-200">
+                                <div>
+                                    <h4 class="font-medium text-neutral-800">智能患者筛选匹配</h4>
+                                    <p class="text-neutral-600 text-sm">为临床试验找到的合格受试者</p>
+                                </div>
+                                <div class="text-2xl font-bold text-primary">1,250</div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between pb-4 border-b border-neutral-200">
+                                <div>
+                                    <h4 class="font-medium text-neutral-800">文献调研时间节省</h4>
+                                    <p class="text-neutral-600 text-sm">相比传统手动检索阅读</p>
+                                </div>
+                                <div class="text-2xl font-bold text-success">70%</div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between pb-4 border-b border-neutral-200">
+                                <div>
+                                    <h4 class="font-medium text-neutral-800">AI辅助生成科研假设</h4>
+                                    <p class="text-neutral-600 text-sm">其中5个已立项</p>
+                                </div>
+                                <div class="text-2xl font-bold text-primary">28</div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between pb-4 border-b border-neutral-200">
+                                <div>
+                                    <h4 class="font-medium text-neutral-800">专病库数据自动入组</h4>
+                                    <p class="text-neutral-600 text-sm">心力衰竭专病库</p>
+                                </div>
+                                <div class="text-2xl font-bold text-primary">4,200</div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium text-neutral-800">新版描述性统计分析</h4>
+                                    <p class="text-neutral-600 text-sm">结果更加准确</p>
+                                </div>
+                                <div class="text-2xl font-bold text-primary">90</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 成功案例 -->
+                <div class="lg:col-span-3">
+                    <div class="bg-white rounded-xl p-6 shadow-soft mb-6">
+                        <h3 class="text-xl font-semibold mb-6 text-neutral-800">成功案例</h3>
+                        
+                        <div class="highlight-card mb-6">
+                            <h4 class="text-lg font-semibold text-neutral-800 mb-4">
+                                <i class="fa fa-flask text-primary mr-2"></i>
+                                基于真实世界数据的急性心梗患者预后影响因素分析
+                            </h4>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-medium text-neutral-700 mb-2">AI应用点：</h5>
+                                    <p class="text-neutral-600">使用自然语言指令，从临床大数据平台中，快速提取了5年内所有AMI患者的影像学报告、生化指标、治疗方式等150个字段，并完成初步清洗和统计分析。</p>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-medium text-neutral-700 mb-2">效率对比：</h5>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="bg-neutral-100 p-4 rounded-lg">
+                                            <div class="text-sm text-neutral-600 mb-1">传统人工数据提取</div>
+                                            <div class="text-3xl font-bold text-neutral-800">3周</div>
+                                        </div>
+                                        <div class="bg-primary/10 p-4 rounded-lg">
+                                            <div class="text-sm text-primary mb-1">使用AI后</div>
+                                            <div class="text-3xl font-bold text-primary">2天</div>
+                                            <div class="text-xs text-success mt-1">效率提升10倍</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 科研项目分布图 -->
+                        <div class="h-64">
+                            <canvas id="researchProjectChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 板块四：教学与管理提升 -->
+    <section class="py-16 bg-neutral-100">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center mb-12">
+                <h2 class="section-title">教学与管理提升</h2>
+                <p class="section-subtitle">AI助力医学教育与医院管理现代化</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 核心场景指标 -->
+                <div class="bg-white rounded-xl p-6 shadow-soft">
+                    <h3 class="text-xl font-semibold mb-6 text-neutral-800">核心场景指标</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-4 border border-neutral-200 rounded-lg">
+                            <div class="text-3xl font-bold text-primary mb-2">85</div>
+                            <div class="text-neutral-600">AI生成虚拟教学案例</div>
+                        </div>
+                        
+                        <div class="p-4 border border-neutral-200 rounded-lg">
+                            <div class="text-3xl font-bold text-primary mb-2">4.2小时</div>
+                            <div class="text-neutral-600">住院医师平台使用时长/周</div>
+                        </div>
+                        
+                        <div class="p-4 border border-neutral-200 rounded-lg">
+                            <div class="text-3xl font-bold text-primary mb-2">1,450</div>
+                            <div class="text-neutral-600">管理者AI数据问答</div>
+                        </div>
+                        
+                        <div class="p-4 border border-neutral-200 rounded-lg">
+                            <div class="text-3xl font-bold text-primary mb-2">8,900</div>
+                            <div class="text-neutral-600">健康管理平台AI自动随访</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 教学效果对比图 -->
+                    <div class="mt-8">
+                        <h4 class="font-medium text-neutral-800 mb-4">教学效果对比</h4>
+                        <div class="h-64">
+                            <canvas id="educationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 用户见证 -->
+                <div class="space-y-6">
+                    <h3 class="text-xl font-semibold text-neutral-800">用户见证</h3>
+                    
+                    <div class="quote-card">
+                        <i class="fa fa-quote-left quote-icon"></i>
+                        <div class="relative z-10">
+                            <p class="text-neutral-700 italic mb-4">AI教学平台为我定制的'心律失常'专题学习包，里面的虚拟病例非常贴近临床，对我的规培考试帮助巨大。</p>
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-tertiary/10 rounded-full flex items-center justify-center text-tertiary mr-4">
+                                    <i class="fa fa-user-md text-xl"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-neutral-800">王同学</div>
+                                    <div class="text-neutral-600 text-sm">规培医师</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quote-card">
+                        <i class="fa fa-quote-left quote-icon"></i>
+                        <div class="relative z-10">
+                            <p class="text-neutral-700 italic mb-4">以前要等月末报表才知道运营数据，现在随时可以问AI，能及时发现问题、调整策略。</p>
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center text-warning mr-4">
+                                    <i class="fa fa-user-md text-xl"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-neutral-800">刘护士长</div>
+                                    <div class="text-neutral-600 text-sm">科室管理者</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 管理效率提升图 -->
+                    <div class="bg-white rounded-xl p-6 shadow-soft">
+                        <h4 class="font-medium text-neutral-800 mb-4">管理效率提升</h4>
+                        <div class="h-48">
+                            <canvas id="managementChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 板块五：知识库与AI进化 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="text-center mb-12">
+                <h2 class="section-title">知识库与AI进化</h2>
+                <p class="section-subtitle">专业知识积累与系统自我优化</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 知识体系规模 -->
+                <div class="bg-white rounded-xl p-6 shadow-soft">
+                    <h3 class="text-xl font-semibold mb-6 text-neutral-800">知识体系规模</h3>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <div class="font-medium text-neutral-800">内部私有知识库</div>
+                                <div class="text-primary font-semibold">650份</div>
+                            </div>
+                            <div class="w-full bg-neutral-200 rounded-full h-4">
+                                <div class="bg-primary h-4 rounded-full" style="width: 65%"></div>
+                            </div>
+                            <div class="mt-1 text-sm text-neutral-600">本院指南、制度、SOP、典型病例</div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <div class="font-medium text-neutral-800">外部通用知识库</div>
+                                <div class="text-primary font-semibold">超过3,000万篇</div>
+                            </div>
+                            <div class="w-full bg-neutral-200 rounded-full h-4">
+                                <div class="bg-primary h-4 rounded-full" style="width: 95%"></div>
+                            </div>
+                            <div class="mt-1 text-sm text-neutral-600">医学文献、教科书、药品数据库</div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <div class="font-medium text-neutral-800">专病知识图谱</div>
+                                <div class="text-primary font-semibold">12个</div>
+                            </div>
+                            <div class="w-full bg-neutral-200 rounded-full h-4">
+                                <div class="bg-primary h-4 rounded-full" style="width: 75%"></div>
+                            </div>
+                            <div class="mt-1 text-sm text-neutral-600">覆盖冠心病、高血压等主要病种</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 知识库调用量趋势 -->
+                    <div class="mt-8">
+                        <h4 class="font-medium text-neutral-800 mb-4">知识库调用量趋势</h4>
+                        <div class="h-48">
+                            <canvas id="knowledgeBaseChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI性能表现 -->
+                <div class="bg-white rounded-xl p-6 shadow-soft">
+                    <h3 class="text-xl font-semibold mb-6 text-neutral-800">AI性能表现</h3>
+                    
+                    <div class="grid grid-cols-1 gap-6 mb-8">
+                        <div class="p-4 border border-neutral-200 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="text-sm text-neutral-600 mb-1">专业问题回答准确率</div>
+                                    <div class="text-3xl font-bold text-success">96.5%</div>
+                                </div>
+                                <div class="w-16 h-16">
+                                    <canvas id="accuracyChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-xs text-neutral-600">基于内部评测</div>
+                        </div>
+                        
+                        <div class="p-4 border border-neutral-200 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="text-sm text-neutral-600 mb-1">用户反馈优化迭代</div>
+                                    <div class="text-3xl font-bold text-primary">每月2次</div>
+                                </div>
+                                <div class="w-16 h-16">
+                                    <i class="fa fa-refresh text-3xl text-primary"></i>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-xs text-neutral-600">持续优化模型性能</div>
+                        </div>
+                        
+                        <div class="p-4 border border-neutral-200 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="text-sm text-neutral-600 mb-1">拒绝回答/不确定率</div>
+                                    <div class="text-3xl font-bold text-warning">&lt;3%</div>
+                                </div>
+                                <div class="w-16 h-16">
+                                    <canvas id="uncertaintyChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-xs text-neutral-600">对于不确定问题，会明确告知，避免误导</div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI能力提升轨迹 -->
+                    <div class="mt-6">
+                        <h4 class="font-medium text-neutral-800 mb-4">AI能力提升轨迹</h4>
+                        <div class="relative">
+                            <!-- 时间线 -->
+                            <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-primary/20"></div>
+                            
+                            <div class="space-y-6">
+                                <div class="flex">
+                                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center z-10">1</div>
+                                    <div class="ml-6">
+                                        <h5 class="font-semibold text-neutral-800">知识底座构建</h5>
+                                        <p class="text-neutral-600 text-sm">整合权威医学知识库，建立专业医学知识体系</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center z-10">2</div>
+                                    <div class="ml-6">
+                                        <h5 class="font-semibold text-neutral-800">临床场景适配</h5>
+                                        <p class="text-neutral-600 text-sm">针对医院实际业务场景进行模型优化和微调</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center z-10">3</div>
+                                    <div class="ml-6">
+                                        <h5 class="font-semibold text-neutral-800">用户反馈迭代</h5>
+                                        <p class="text-neutral-600 text-sm">基于医生、护士使用反馈持续优化模型性能</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex">
+                                    <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center z-10">4</div>
+                                    <div class="ml-6">
+                                        <h5 class="font-semibold text-neutral-800">自主学习进化</h5>
+                                        <p class="text-neutral-600 text-sm">系统自我学习和知识更新，能力持续提升</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 总结与建议 -->
+    <section class="py-16 bg-gradient-to-b from-neutral-100 to-white">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="section-title">总结与价值</h2>
+                    <p class="section-subtitle">AI赋能医疗的核心价值与未来展望</p>
+                </div>
+                
+                <div class="space-y-8">
+                    <div class="bg-white rounded-xl p-8 shadow-soft border border-neutral-200">
+                        <h3 class="text-xl font-semibold mb-6 text-neutral-800">核心价值体现</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4 flex-shrink-0">
+                                    <i class="fa fa-heartbeat"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-neutral-800 mb-2">提升医疗质量</h4>
+                                    <p class="text-neutral-600">诊断准确率提升5.2%，减少医疗差错，提高患者安全</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary mr-4 flex-shrink-0">
+                                    <i class="fa fa-tachometer"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-neutral-800 mb-2">提高工作效率</h4>
+                                    <p class="text-neutral-600">人均效率提升31.5%，大幅减轻医护人员文书负担</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary mr-4 flex-shrink-0">
+                                    <i class="fa fa-flask"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-neutral-800 mb-2">加速科研创新</h4>
+                                    <p class="text-neutral-600">科研数据准备时间从天级缩短至小时级，促进医学研究突破</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center text-warning mr-4 flex-shrink-0">
+                                    <i class="fa fa-graduation-cap"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-neutral-800 mb-2">优化医学教育</h4>
+                                    <p class="text-neutral-600">个性化学习路径，虚拟病例实战训练，加速年轻医生成长</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-8 border border-primary/20">
+                        <h3 class="text-xl font-semibold mb-6 text-neutral-800">未来展望</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary mr-3 flex-shrink-0">
+                                    <i class="fa fa-rocket"></i>
+                                </div>
+                                <p class="text-neutral-700">持续扩大专病知识库覆盖范围，提升专科AI能力</p>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary mr-3 flex-shrink-0">
+                                    <i class="fa fa-handshake-o"></i>
+                                </div>
+                                <p class="text-neutral-700">深化多模态融合，结合影像、检验等多源数据提供更全面的辅助决策</p>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary mr-3 flex-shrink-0">
+                                    <i class="fa fa-users"></i>
+                                </div>
+                                <p class="text-neutral-700">构建区域医疗AI协作网络，促进优质医疗资源下沉</p>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary mr-3 flex-shrink-0">
+                                    <i class="fa fa-shield"></i>
+                                </div>
+                                <p class="text-neutral-700">强化隐私保护与数据安全，确保AI应用合规可信</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-neutral-800 text-white py-12">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                            <i class="fa fa-heartbeat text-white text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold">医疗AI开放平台</span>
+                    </div>
+                    <p class="text-neutral-400 mb-6">
+                        赋能医疗全场景，助力智慧医院建设
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-neutral-400 hover:text-white transition-colors">
+                            <i class="fa fa-weixin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-neutral-400 hover:text-white transition-colors">
+                            <i class="fa fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-neutral-400 hover:text-white transition-colors">
+                            <i class="fa fa-linkedin text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">核心能力</h4>
+                    <ul class="space-y-3">
+                        <li><a href="text-analysis.html" class="text-neutral-400 hover:text-white transition-colors">医学文本分析</a></li>
+                        <li><a href="image-analysis.html" class="text-neutral-400 hover:text-white transition-colors">医学影像智能分析</a></li>
+                        <li><a href="chatbot.html" class="text-neutral-400 hover:text-white transition-colors">智能问诊与对话</a></li>
+                        <li><a href="research-assistant.html" class="text-neutral-400 hover:text-white transition-colors">医学科研助手</a></li>
+                        <li><a href="education.html" class="text-neutral-400 hover:text-white transition-colors">医学教育辅助</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">资源中心</h4>
+                    <ul class="space-y-3">
+                        <li><a href="solutions.html" class="text-neutral-400 hover:text-white transition-colors">解决方案</a></li>
+                        <li><a href="api-docs.html" class="text-neutral-400 hover:text-white transition-colors">API文档</a></li>
+                        <li><a href="news.html" class="text-neutral-400 hover:text-white transition-colors">新闻动态</a></li>
+                        <li><a href="ai-results-dashboard.html" class="text-neutral-400 hover:text-white transition-colors">统计面板</a></li>
+                        <li><a href="user-guide.html" class="text-neutral-400 hover:text-white transition-colors">用户指南</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">关于我们</h4>
+                    <ul class="space-y-3">
+                        <li><a href="about.html" class="text-neutral-400 hover:text-white transition-colors">公司简介</a></li>
+                        <li><a href="faq.html" class="text-neutral-400 hover:text-white transition-colors">常见问题</a></li>
+                        <li><a href="privacy-policy.html" class="text-neutral-400 hover:text-white transition-colors">隐私政策</a></li>
+                        <li><a href="terms-of-service.html" class="text-neutral-400 hover:text-white transition-colors">服务条款</a></li>
+                        <li><a href="#" class="text-neutral-400 hover:text-white transition-colors">联系我们</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-12 pt-8 border-t border-neutral-700 text-center text-neutral-500">
+                <p>© 2025 医疗AI开放平台. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.remove('shadow-sm');
+            } else {
+                navbar.classList.add('shadow-sm');
+                navbar.classList.remove('shadow-md');
+            }
+        });
+        
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // AI能力调用分布图
+        const aiCapabilityCtx = document.getElementById('aiCapabilityChart').getContext('2d');
+        const aiCapabilityChart = new Chart(aiCapabilityCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['临床辅助决策', '病历质控与编码', '科研与数据洞察', '患者管理与教学', '其他'],
+                datasets: [{
+                    data: [45, 25, 15, 10, 5],
+                    backgroundColor: [
+                        '#165DFF',
+                        '#0FC6C2',
+                        '#722ED1',
+                        '#FF7D00',
+                        '#86909C'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+        
+        // 临床应用趋势图
+        const clinicalTrendCtx = document.getElementById('clinicalTrendChart').getContext('2d');
+        const clinicalTrendChart = new Chart(clinicalTrendCtx, {
+            type: 'line',
+            data: {
+                labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                datasets: [{
+                    label: 'AI辅助诊断调用量',
+                    data: [8500, 9200, 10500, 11800, 13200, 15300],
+                    borderColor: '#165DFF',
+                    backgroundColor: 'rgba(22, 93, 255, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 科研项目分布图
+        const researchProjectCtx = document.getElementById('researchProjectChart').getContext('2d');
+        const researchProjectChart = new Chart(researchProjectCtx, {
+            type: 'bar',
+            data: {
+                labels: ['心血管疾病', '肿瘤研究', '神经系统疾病', '内分泌疾病', '呼吸系统疾病'],
+                datasets: [{
+                    label: 'AI辅助项目数量',
+                    data: [12, 8, 5, 6, 7],
+                    backgroundColor: [
+                        'rgba(22, 93, 255, 0.8)',
+                        'rgba(12, 198, 194, 0.8)',
+                        'rgba(114, 46, 209, 0.8)',
+                        'rgba(255, 125, 0, 0.8)',
+                        'rgba(0, 180, 42, 0.8)'
+                    ],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 教学效果对比图
+        const educationCtx = document.getElementById('educationChart').getContext('2d');
+        const educationChart = new Chart(educationCtx, {
+            type: 'radar',
+            data: {
+                labels: ['理论知识', '临床思维', '诊断能力', '治疗方案制定', '病历书写'],
+                datasets: [
+                    {
+                        label: '传统教学',
+                        data: [75, 65, 60, 55, 70],
+                        borderColor: '#86909C',
+                        backgroundColor: 'rgba(134, 144, 156, 0.2)'
+                    },
+                    {
+                        label: 'AI辅助教学',
+                        data: [85, 88, 82, 80, 85],
+                        borderColor: '#165DFF',
+                        backgroundColor: 'rgba(22, 93, 255, 0.2)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 管理效率提升图
+        const managementCtx = document.getElementById('managementChart').getContext('2d');
+        const managementChart = new Chart(managementCtx, {
+            type: 'line',
+            data: {
+                labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                datasets: [{
+                    label: '管理决策速度提升(%)',
+                    data: [15, 22, 28, 35, 38, 42],
+                    borderColor: '#FF7D00',
+                    backgroundColor: 'rgba(255, 125, 0, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 知识库调用量趋势
+        const knowledgeBaseCtx = document.getElementById('knowledgeBaseChart').getContext('2d');
+        const knowledgeBaseChart = new Chart(knowledgeBaseCtx, {
+            type: 'line',
+            data: {
+                labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                datasets: [
+                    {
+                        label: '内部知识库',
+                        data: [120000, 150000, 180000, 210000, 240000, 260000],
+                        borderColor: '#165DFF',
+                        backgroundColor: 'transparent',
+                        tension: 0.4
+                    },
+                    {
+                        label: '外部知识库',
+                        data: [180000, 220000, 260000, 310000, 350000, 390000],
+                        borderColor: '#0FC6C2',
+                        backgroundColor: 'transparent',
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+        
+        // 准确率饼图
+        const accuracyCtx = document.getElementById('accuracyChart').getContext('2d');
+        const accuracyChart = new Chart(accuracyCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['正确', '错误'],
+                datasets: [{
+                    data: [96.5, 3.5],
+                    backgroundColor: [
+                        '#00B42A',
+                        '#F53F3F'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        
+        // 不确定率饼图
+        const uncertaintyCtx = document.getElementById('uncertaintyChart').getContext('2d');
+        const uncertaintyChart = new Chart(uncertaintyCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['不确定', '确定'],
+                datasets: [{
+                    data: [3, 97],
+                    backgroundColor: [
+                        '#FF7D00',
+                        '#00B42A'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
