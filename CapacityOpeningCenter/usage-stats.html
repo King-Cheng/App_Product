@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用统计 - 医疗AI能力开放平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36CFC9',
+            success: '#52C41A',
+            warning: '#FAAD14',
+            danger: '#FF4D4F',
+            info: '#8C8C8C',
+            dark: '#1F2329',
+            light: '#F5F7FA'
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .card-shadow {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      .hover-scale {
+        transition: transform 0.3s ease;
+      }
+      .hover-scale:hover {
+        transform: scale(1.02);
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #165DFF 0%, #36CFC9 100%);
+      }
+      .stat-card-bg {
+        background: linear-gradient(135deg, rgba(22, 93, 255, 0.05) 0%, rgba(54, 207, 201, 0.05) 100%);
+      }
+      .nav-active {
+        color: #165DFF;
+        font-weight: 600;
+        position: relative;
+      }
+      .nav-active::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #165DFF;
+        border-radius: 3px;
+      }
+      .tag-bg {
+        background: rgba(22, 93, 255, 0.05);
+        color: #165DFF;
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-light text-dark">
+  <!-- 头部导航 -->
+  <header class="bg-white sticky top-0 z-50 card-shadow">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center text-white">
+          <i class="fa fa-heartbeat text-xl"></i>
+        </div>
+        <h1 class="text-xl font-bold text-dark">医疗AI能力开放平台</h1>
+      </div>
+      <!-- 桌面导航 -->
+      <nav class="hidden md:flex space-x-8">
+        <a href="index.html" class="text-dark hover:text-primary transition-colors py-2">首页</a>
+        <a href="product-capabilities.html" class="text-dark hover:text-primary transition-colors py-2">产品能力</a>
+        <a href="ai-capabilities.html" class="text-dark hover:text-primary transition-colors py-2">AI技术能力</a>
+        <a href="usage-stats.html" class="nav-active py-2">使用统计</a>
+        <a href="department-distribution.html" class="text-dark hover:text-primary transition-colors py-2">科室分布</a>
+      </nav>
+      <!-- 移动端导航按钮 -->
+      <button class="md:hidden text-dark text-xl" id="mobile-menu-button">
+        <i class="fa fa-bars"></i>
+      </button>
+    </div>
+    <!-- 移动端导航菜单 -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200 py-4">
+      <div class="container mx-auto px-4">
+        <nav class="flex flex-col space-y-3">
+          <a href="index.html" class="py-2 px-3 text-dark hover:bg-gray-100 rounded-lg transition-colors">首页</a>
+          <a href="product-capabilities.html" class="py-2 px-3 text-dark hover:bg-gray-100 rounded-lg transition-colors">产品能力</a>
+          <a href="ai-capabilities.html" class="py-2 px-3 text-dark hover:bg-gray-100 rounded-lg transition-colors">AI技术能力</a>
+          <a href="usage-stats.html" class="py-2 px-3 bg-primary/10 text-primary rounded-lg font-medium">使用统计</a>
+          <a href="department-distribution.html" class="py-2 px-3 text-dark hover:bg-gray-100 rounded-lg transition-colors">科室分布</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <script>
+    // 移动端导航菜单切换
+    document.getElementById('mobile-menu-button').addEventListener('click', function() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+
+  <!-- 主要内容 -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- 面包屑导航 -->
+    <div class="flex items-center text-sm mb-6">
+      <a href="index.html" class="text-info hover:text-primary">首页</a>
+      <i class="fa fa-angle-right text-info mx-2"></i>
+      <span class="text-dark font-medium">使用统计</span>
+    </div>
+
+    <!-- 页面标题 -->
+    <div class="mb-8">
+      <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-2">使用统计分析</h2>
+      <p class="text-info">全面了解医疗AI能力平台的调用使用量、趋势和分布情况</p>
+    </div>
+
+    <!-- 时间筛选器 -->
+    <div class="bg-white rounded-xl p-4 mb-8 card-shadow flex flex-wrap items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <span class="text-sm text-info">时间范围：</span>
+        <div class="flex border border-gray-200 rounded-lg overflow-hidden">
+          <button class="px-4 py-2 text-sm bg-primary text-white">今日</button>
+          <button class="px-4 py-2 text-sm text-info hover:bg-gray-50 transition-colors">昨日</button>
+          <button class="px-4 py-2 text-sm text-info hover:bg-gray-50 transition-colors">本周</button>
+          <button class="px-4 py-2 text-sm text-info hover:bg-gray-50 transition-colors">本月</button>
+          <button class="px-4 py-2 text-sm text-info hover:bg-gray-50 transition-colors">自定义</button>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-3 ml-auto">
+        <span class="text-sm text-info">数据刷新：</span>
+        <span class="text-sm">2023-06-15 10:30:45</span>
+        <button class="px-3 py-1.5 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors">
+          <i class="fa fa-refresh mr-1"></i> 刷新
+        </button>
+      </div>
+    </div>
+
+    <!-- 总体使用统计 -->
+    <section class="mb-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- 总调用量 -->
+        <div class="bg-white rounded-xl p-6 card-shadow hover-scale">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">总调用量</h3>
+            <span class="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full">24h</span>
+          </div>
+          <p class="text-3xl font-bold mb-2">128,642</p>
+          <div class="flex items-center text-sm">
+            <span class="text-success flex items-center">
+              <i class="fa fa-arrow-up mr-1"></i> 15.3%
+            </span>
+            <span class="text-info ml-2">较昨日</span>
+          </div>
+          <div class="mt-4 h-12">
+            <canvas id="totalCallsChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- 活跃用户数 -->
+        <div class="bg-white rounded-xl p-6 card-shadow hover-scale">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">活跃用户数</h3>
+            <span class="px-3 py-1 bg-secondary/10 text-secondary text-xs rounded-full">24h</span>
+          </div>
+          <p class="text-3xl font-bold mb-2">1,456</p>
+          <div class="flex items-center text-sm">
+            <span class="text-success flex items-center">
+              <i class="fa fa-arrow-up mr-1"></i> 8.7%
+            </span>
+            <span class="text-info ml-2">较昨日</span>
+          </div>
+          <div class="mt-4 h-12">
+            <canvas id="activeUsersChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- 调用成功率 -->
+        <div class="bg-white rounded-xl p-6 card-shadow hover-scale">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">调用成功率</h3>
+            <span class="px-3 py-1 bg-success/10 text-success text-xs rounded-full">24h</span>
+          </div>
+          <p class="text-3xl font-bold mb-2">99.82%</p>
+          <div class="flex items-center text-sm">
+            <span class="text-success flex items-center">
+              <i class="fa fa-arrow-up mr-1"></i> 0.15%
+            </span>
+            <span class="text-info ml-2">较昨日</span>
+          </div>
+          <div class="mt-4 h-12">
+            <canvas id="successRateChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- 平均响应时间 -->
+        <div class="bg-white rounded-xl p-6 card-shadow hover-scale">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">平均响应时间</h3>
+            <span class="px-3 py-1 bg-warning/10 text-warning text-xs rounded-full">24h</span>
+          </div>
+          <p class="text-3xl font-bold mb-2">142ms</p>
+          <div class="flex items-center text-sm">
+            <span class="text-danger flex items-center">
+              <i class="fa fa-arrow-up mr-1"></i> 2.3%
+            </span>
+            <span class="text-info ml-2">较昨日</span>
+          </div>
+          <div class="mt-4 h-12">
+            <canvas id="responseTimeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 调用趋势分析 -->
+    <section class="mb-10">
+      <div class="bg-white rounded-xl p-6 card-shadow">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-dark">调用趋势分析</h3>
+          <div class="flex space-x-3 mt-4 md:mt-0">
+            <select class="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary bg-white">
+              <option>调用总量</option>
+              <option>产品能力调用量</option>
+              <option>AI技术能力调用量</option>
+              <option>按接口类型</option>
+            </select>
+            <select class="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary bg-white">
+              <option>最近7天</option>
+              <option>最近30天</option>
+              <option>最近90天</option>
+              <option>自定义范围</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="h-80">
+          <canvas id="callTrendChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- 能力类型分布 -->
+    <section class="mb-10">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- 调用类型分布 -->
+        <div class="bg-white rounded-xl p-6 card-shadow">
+          <h3 class="text-xl font-bold text-dark mb-6">调用类型分布</h3>
+          <div class="h-72">
+            <canvas id="callTypeDistributionChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- 能力开放度统计 -->
+        <div class="bg-white rounded-xl p-6 card-shadow">
+          <h3 class="text-xl font-bold text-dark mb-6">能力开放度统计</h3>
+          <div class="h-72">
+            <canvas id="capacityOpennessChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 最受欢迎能力TOP10 -->
+    <section class="mb-10">
+      <div class="bg-white rounded-xl p-6 card-shadow">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-dark">最受欢迎能力TOP10</h3>
+          <div class="flex space-x-3 mt-4 md:mt-0">
+            <select class="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary bg-white">
+              <option>按调用量排序</option>
+              <option>按用户数排序</option>
+              <option>按增长率排序</option>
+              <option>按满意度排序</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[640px]">
+            <thead>
+              <tr class="border-b border-gray-200">
+                <th class="text-left py-4 px-4 font-semibold text-sm">排名</th>
+                <th class="text-left py-4 px-4 font-semibold text-sm">能力名称</th>
+                <th class="text-left py-4 px-4 font-semibold text-sm">所属类别</th>
+                <th class="text-left py-4 px-4 font-semibold text-sm">调用量</th>
+                <th class="text-left py-4 px-4 font-semibold text-sm">同比增长</th>
+                <th class="text-left py-4 px-4 font-semibold text-sm">使用用户数</th>
+                <th class="text-left py-4 px-4 font-semibold text-sm">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="py-4 px-4 text-sm"><span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center">1</span></td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                      <i class="fa fa-robot"></i>
+                    </div>
+                    <span class="text-sm font-medium">报告解读智能体</span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-sm text-info">AI技术能力</td>
+                <td class="py-4 px-4 text-sm font-medium">22,620</td>
+                <td class="py-4 px-4"><span class="px-2 py-1 bg-success/10 text-success text-xs rounded-full">+26.8%</span></td>
+                <td class="py-4 px-4 text-sm">732</td>
+                <td class="py-4 px-4">
+                  <button class="text-primary text-sm hover:underline">查看详情</button>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="py-4 px-4 text-sm"><span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center">2</span></td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                      <i class="fa fa-robot"></i>
+                    </div>
+                    <span class="text-sm font-medium">健康知识小结智能体</span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-sm text-info">AI技术能力</td>
+                <td class="py-4 px-4 text-sm font-medium">18,920</td>
+                <td class="py-4 px-4"><span class="px-2 py-1 bg-success/10 text-success text-xs rounded-full">+22.3%</span></td>
+                <td class="py-4 px-4 text-sm">654</td>
+                <td class="py-4 px-4">
+                  <button class="text-primary text-sm hover:underline">查看详情</button>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="py-4 px-4 text-sm"><span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center">3</span></td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                      <i class="fa fa-stethoscope"></i>
+                    </div>
+                    <span class="text-sm font-medium">智能辅助诊断</span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-sm text-info">产品能力</td>
+                <td class="py-4 px-4 text-sm font-medium">16,780</td>
+                <td class="py-4 px-4"><span class="px-2 py-1 bg-success/10 text-success text-xs rounded-full">+18.5%</span></td>
+                <td class="py-4 px-4 text-sm">587</td>
+                <td class="py-4 px-4">
+                  <button class="text-primary text-sm hover:underline">查看详情</button>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="py-4 px-4 text-sm"><span class="w-6 h-6 rounded-full bg-primary/80 text-white flex items-center justify-center">4</span></td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                      <i class="fa fa-robot"></i>
+                    </div>
+                    <span class="text-sm font-medium">患者风险预测智能体</span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-sm text-info">AI技术能力</td>
+                <td class="py-4 px-4 text-sm font-medium">15,220</td>
+                <td class="py-4 px-4"><span class="px-2 py-1 bg-success/10 text-success text-xs rounded-full">+16.2%</span></td>
+                <td class="py-4 px-4 text-sm">498</td>
+                <td class="py-4 px-4">
+                  <button class="text-primary text-sm hover:underline">查看详情</button>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="py-4 px-4 text-sm"><span class="w-6 h-6 rounded-full bg-primary/80 text-white flex items-center justify-center">5</span></td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                      <i class="fa fa-line-chart"></i>
+                    </div>
+                    <span class="text-sm font-medium">心血管疾病风险评估模型</span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-sm text-info">AI技术能力</td>
+                <td class="py-4 px-4 text-sm font-medium">11,520</td>
+                <td class="py-4 px-4"><span class="px-2 py-1 bg-success/10 text-success text-xs rounded-full">+14.8%</span></td>
+                <td class="py-4 px-4 text-sm">412</td>
+                <td class="py-4 px-4">
+                  <button class="text-primary text-sm hover:underline">查看详情</button>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="py-4 px-4 text-sm"><span class="w-6 h-6 rounded-full bg-gray-500 text-white flex items-center justify-center">6</span></td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                      <i class="fa fa-file-text-o"></i>
+                    </div>
+                    <span class="text-sm font-medium">病历智能质控</span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-sm text-info">产品能力</td>
+                <td class="py-4 px-4 text-sm font-medium">9,870</td>
+                <td class="py-4 px-4"><span class="px-2 py-1 bg-success/10 text-success text-xs rounded-full">+12.5%</span></td>
+                <td class="py-4 px-4 text-sm">356</td>
+                <td class="py-4 px-4">
+                  <button class="text-primary text-sm hover:underline">查看详情</button>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="py-4 px-4 text-sm"><span class="w-6 h-6 rounded-full bg-gray-500 text-white flex items-center justify-center">7</span></td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                      <i class="fa fa-code-fork"></i>
+                    </div>
+                    <span class="text-sm font-medium">智能医学编码</span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-sm text-info">产品能力</td>
+                <td class="py-4 px-4 text-sm font-medium">8,640</td>
+                <td class="py-4 px-4"><span class="px-2 py-1 bg-success/10 text-success text-xs rounded-full">+10.3%</span></td>
+                <td class="py-4 px-4 text-sm">321</td>
+                <td class="py-4 px-4">
+                  <button class="text-primary text-sm hover:underline">查看详情</button>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="py-4 px-4 text-sm"><span class="w-6 h-6 rounded-full bg-gray-500 text-white flex items-center justify-center">8</span></td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                      <i class="fa fa-line-chart"></i>
+                    </div>
+                    <span class="text-sm font-medium">骨科DVT预测模型</span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-sm text-info">AI技术能力</td>
+                <td class="py-4 px-4 text-sm font-medium">7,820</td>
+                <td class="py-4 px-4"><span class="px-2 py-1 bg-success/10 text-success text-xs rounded-full">+8.7%</span></td>
+                <td class="py-4 px-4 text-sm">289</td>
+                <td class="py-4 px-4">
+                  <button class="text-primary text-sm hover:underline">查看详情</button>
+                </td>
+              </tr>
+              <tr class="border-b border-gray-200 hover:bg-gray-50 transition-colors">
+                <td class="py-4 px-4 text-sm"><span class="w-6 h-6 rounded-full bg-gray-500 text-white flex items-center justify-center">9</span></td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                      <i class="fa fa-bell"></i>
+                    </div>
+                    <span class="text-sm font-medium">临床决策支持</span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-sm text-info">产品能力</td>
+                <td class="py-4 px-4 text-sm font-medium">6,780</td>
+                <td class="py-4 px-4"><span class="px-2 py-1 bg-success/10 text-success text-xs rounded-full">+7.2%</span></td>
+                <td class="py-4 px-4 text-sm">245</td>
+                <td class="py-4 px-4">
+                  <button class="text-primary text-sm hover:underline">查看详情</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="py-4 px-4 text-sm"><span class="w-6 h-6 rounded-full bg-gray-500 text-white flex items-center justify-center">10</span></td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
+                      <i class="fa fa-line-chart"></i>
+                    </div>
+                    <span class="text-sm font-medium">糖尿病并发症预测模型</span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-sm text-info">AI技术能力</td>
+                <td class="py-4 px-4 text-sm font-medium">6,620</td>
+                <td class="py-4 px-4"><span class="px-2 py-1 bg-success/10 text-success text-xs rounded-full">+6.5%</span></td>
+                <td class="py-4 px-4 text-sm">231</td>
+                <td class="py-4 px-4">
+                  <button class="text-primary text-sm hover:underline">查看详情</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 使用趋势分析 -->
+    <section class="mb-10">
+      <div class="bg-white rounded-xl p-6 card-shadow">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-dark">使用趋势分析</h3>
+          <div class="flex space-x-3 mt-4 md:mt-0">
+            <select class="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary bg-white">
+              <option>日趋势</option>
+              <option>周趋势</option>
+              <option>月趋势</option>
+              <option>季度趋势</option>
+            </select>
+            <select class="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-primary bg-white">
+              <option>全部能力</option>
+              <option>产品能力</option>
+              <option>AI技术能力</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="h-80">
+          <canvas id="usageTrendChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- 调用性能分析 -->
+    <section class="mb-10">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- 响应时间分布 -->
+        <div class="bg-white rounded-xl p-6 card-shadow">
+          <h3 class="text-xl font-bold text-dark mb-6">响应时间分布</h3>
+          <div class="h-72">
+            <canvas id="responseTimeDistributionChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- 错误率分析 -->
+        <div class="bg-white rounded-xl p-6 card-shadow">
+          <h3 class="text-xl font-bold text-dark mb-6">错误率分析</h3>
+          <div class="h-72">
+            <canvas id="errorRateChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-white border-t border-gray-200 py-8">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center space-x-3 mb-4 md:mb-0">
+          <div class="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center text-white">
+            <i class="fa fa-heartbeat text-xl"></i>
+          </div>
+          <span class="font-bold text-dark">医疗AI能力开放平台</span>
+        </div>
+        
+        <div class="flex space-x-6 mb-4 md:mb-0">
+          <a href="index.html" class="text-info hover:text-primary transition-colors">首页</a>
+          <a href="product-capabilities.html" class="text-info hover:text-primary transition-colors">产品能力</a>
+          <a href="ai-capabilities.html" class="text-info hover:text-primary transition-colors">AI技术能力</a>
+          <a href="usage-stats.html" class="text-primary font-medium">使用统计</a>
+          <a href="department-distribution.html" class="text-info hover:text-primary transition-colors">科室分布</a>
+        </div>
+        
+        <div class="flex space-x-4">
+          <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-info hover:bg-primary/10 hover:text-primary transition-colors">
+            <i class="fa fa-weixin"></i>
+          </a>
+          <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-info hover:bg-primary/10 hover:text-primary transition-colors">
+            <i class="fa fa-weibo"></i>
+          </a>
+          <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-info hover:bg-primary/10 hover:text-primary transition-colors">
+            <i class="fa fa-envelope"></i>
+          </a>
+        </div>
+      </div>
+      
+      <div class="mt-6 pt-6 border-t border-gray-200 text-center text-sm text-info">
+        <p>© 2023 医疗AI能力开放平台 版权所有 | 京ICP备XXXXXXXX号-X</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript 代码 -->
+  <script>
+    // 总调用量迷你图表
+    const totalCallsCtx = document.getElementById('totalCallsChart').getContext('2d');
+    const totalCallsChart = new Chart(totalCallsCtx, {
+      type: 'line',
+      data: {
+        labels: Array(24).fill(''),
+        datasets: [{
+          data: [4200, 3800, 3200, 2800, 2500, 2300, 2800, 4100, 5600, 6200, 6800, 7100, 6900, 7200, 7400, 7800, 8200, 7900, 7500, 6800, 6100, 5300, 4800, 4500],
+          borderColor: '#165DFF',
+          backgroundColor: 'rgba(22, 93, 255, 0.1)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        elements: { line: { borderWidth: 2 } }
+      }
+    });
+
+    // 活跃用户数迷你图表
+    const activeUsersCtx = document.getElementById('activeUsersChart').getContext('2d');
+    const activeUsersChart = new Chart(activeUsersCtx, {
+      type: 'line',
+      data: {
+        labels: Array(24).fill(''),
+        datasets: [{
+          data: [65, 58, 42, 38, 32, 30, 41, 72, 98, 112, 125, 131, 128, 135, 138, 142, 148, 145, 140, 128, 115, 98, 85, 72],
+          borderColor: '#36CFC9',
+          backgroundColor: 'rgba(54, 207, 201, 0.1)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        elements: { line: { borderWidth: 2 } }
+      }
+    });
+
+    // 调用成功率迷你图表
+    const successRateCtx = document.getElementById('successRateChart').getContext('2d');
+    const successRateChart = new Chart(successRateCtx, {
+      type: 'line',
+      data: {
+        labels: Array(24).fill(''),
+        datasets: [{
+          data: [99.75, 99.78, 99.72, 99.81, 99.85, 99.79, 99.82, 99.80, 99.78, 99.83, 99.85, 99.84, 99.86, 99.83, 99.84, 99.81, 99.79, 99.82, 99.84, 99.85, 99.87, 99.86, 99.83, 99.82],
+          borderColor: '#52C41A',
+          backgroundColor: 'rgba(82, 196, 26, 0.1)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        elements: { line: { borderWidth: 2 } }
+      }
+    });
+
+    // 平均响应时间迷你图表
+    const responseTimeCtx = document.getElementById('responseTimeChart').getContext('2d');
+    const responseTimeChart = new Chart(responseTimeCtx, {
+      type: 'line',
+      data: {
+        labels: Array(24).fill(''),
+        datasets: [{
+          data: [135, 132, 130, 128, 125, 122, 128, 132, 138, 142, 145, 148, 146, 143, 145, 148, 152, 149, 146, 142, 138, 135, 133, 130],
+          borderColor: '#FAAD14',
+          backgroundColor: 'rgba(250, 173, 20, 0.1)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } },
+        elements: { line: { borderWidth: 2 } }
+      }
+    });
+
+    // 调用趋势图
+    const callTrendCtx = document.getElementById('callTrendChart').getContext('2d');
+    const callTrendChart = new Chart(callTrendCtx, {
+      type: 'line',
+      data: {
+        labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        datasets: [
+          {
+            label: '总调用量',
+            data: [98543, 102456, 118623, 124532, 128642, 75621, 82453],
+            borderColor: '#165DFF',
+            backgroundColor: 'rgba(22, 93, 255, 0.1)',
+            tension: 0.4,
+            fill: true
+          },
+          {
+            label: '产品能力调用量',
+            data: [43256, 45621, 52143, 54621, 56789, 32456, 35621],
+            borderColor: '#36CFC9',
+            backgroundColor: 'rgba(54, 207, 201, 0.05)',
+            tension: 0.4,
+            fill: true
+          },
+          {
+            label: 'AI技术能力调用量',
+            data: [55287, 56835, 66480, 69911, 71853, 43165, 46832],
+            borderColor: '#FAAD14',
+            backgroundColor: 'rgba(250, 173, 20, 0.05)',
+            tension: 0.4,
+            fill: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                  label += context.parsed.y.toLocaleString();
+                }
+                return label;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return value.toLocaleString();
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // 调用类型分布饼图
+    const callTypeDistributionCtx = document.getElementById('callTypeDistributionChart').getContext('2d');
+    const callTypeDistributionChart = new Chart(callTypeDistributionCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['智能辅助诊断', '大模型智能体', '机器学习模型', '病历质控', '其他'],
+        datasets: [{
+          data: [35, 28, 18, 12, 7],
+          backgroundColor: [
+            '#165DFF',
+            '#36CFC9',
+            '#52C41A',
+            '#FAAD14',
+            '#8C8C8C'
+          ],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.parsed || 0;
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const percentage = Math.round((value / total) * 100);
+                return `${label}: ${percentage}%`;
+              }
+            }
+          }
+        },
+        cutout: '60%'
+      }
+    });
+
+    // 能力开放度统计柱状图
+    const capacityOpennessCtx = document.getElementById('capacityOpennessChart').getContext('2d');
+    const capacityOpennessChart = new Chart(capacityOpennessCtx, {
+      type: 'bar',
+      data: {
+        labels: ['CDSS产品', '内涵质控产品', 'API接口能力', '机器学习模型', '大模型智能体', '科研平台', '健康平台'],
+        datasets: [{
+          label: '已开放能力数',
+          data: [15, 8, 25, 31, 50, 7, 15],
+          backgroundColor: '#165DFF',
+          borderRadius: 4
+        },
+        {
+          label: '规划中能力数',
+          data: [10, 5, 15, 18, 30, 5, 10],
+          backgroundColor: '#D9D9D9',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          }
+        },
+        scales: {
+          x: {
+            stacked: true,
+          },
+          y: {
+            stacked: true,
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // 使用趋势分析图
+    const usageTrendCtx = document.getElementById('usageTrendChart').getContext('2d');
+    const usageTrendChart = new Chart(usageTrendCtx, {
+      type: 'line',
+      data: {
+        labels: ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'],
+        datasets: [
+          {
+            label: '调用量',
+            data: [3200, 2500, 2800, 12500, 21300, 24800, 21600, 15600],
+            borderColor: '#165DFF',
+            backgroundColor: 'rgba(22, 93, 255, 0.1)',
+            tension: 0.4,
+            fill: true,
+            yAxisID: 'y'
+          },
+          {
+            label: '用户数',
+            data: [38, 32, 41, 156, 289, 345, 298, 215],
+            borderColor: '#36CFC9',
+            backgroundColor: 'transparent',
+            tension: 0.4,
+            fill: false,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                  label += context.parsed.y.toLocaleString();
+                }
+                return label;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+            title: {
+              display: true,
+              text: '调用量'
+            },
+            ticks: {
+              callback: function(value) {
+                return value.toLocaleString();
+              }
+            }
+          },
+          y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            title: {
+              display: true,
+              text: '用户数'
+            },
+            grid: {
+              drawOnChartArea: false,
+            },
+            ticks: {
+              callback: function(value) {
+                return value.toLocaleString();
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // 响应时间分布直方图
+    const responseTimeDistributionCtx = document.getElementById('responseTimeDistributionChart').getContext('2d');
+    const responseTimeDistributionChart = new Chart(responseTimeDistributionCtx, {
+      type: 'bar',
+      data: {
+        labels: ['<50ms', '50-100ms', '100-150ms', '150-200ms', '200-300ms', '>300ms'],
+        datasets: [{
+          label: '调用量占比',
+          data: [15, 35, 28, 12, 7, 3],
+          backgroundColor: [
+            '#52C41A',
+            '#73D13D',
+            '#FAAD14',
+            '#FA8C16',
+            '#FF4D4F',
+            '#CF1322'
+          ],
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `占比: ${context.parsed.y}%`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return value + '%';
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // 错误率分析图
+    const errorRateCtx = document.getElementById('errorRateChart').getContext('2d');
+    const errorRateChart = new Chart(errorRateCtx, {
+      type: 'line',
+      data: {
+        labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+        datasets: [
+          {
+            label: '系统错误率',
+            data: [0.08, 0.07, 0.09, 0.08, 0.06, 0.05, 0.04],
+            borderColor: '#FF4D4F',
+            backgroundColor: 'rgba(255, 77, 79, 0.1)',
+            tension: 0.4,
+            fill: true
+          },
+          {
+            label: '请求错误率',
+            data: [0.12, 0.14, 0.11, 0.10, 0.09, 0.08, 0.07],
+            borderColor: '#FAAD14',
+            backgroundColor: 'rgba(250, 173, 20, 0.1)',
+            tension: 0.4,
+            fill: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return `${context.dataset.label}: ${(context.parsed.y * 100).toFixed(2)}%`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return (value * 100).toFixed(1) + '%';
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>产品能力详情 - 医疗AI能力开放平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36CFC9',
+            success: '#52C41A',
+            warning: '#FAAD14',
+            danger: '#FF4D4F',
+            info: '#8C8C8C',
+            dark: '#1F2329',
+            light: '#F5F7FA'
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .card-shadow {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      .hover-scale {
+        transition: transform 0.3s ease;
+      }
+      .hover-scale:hover {
+        transform: scale(1.02);
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #165DFF 0%, #36CFC9 100%);
+      }
+      .stat-card-bg {
+        background: linear-gradient(135deg, rgba(22, 93, 255, 0.05) 0%, rgba(54, 207, 201, 0.05) 100%);
+      }
+      .nav-active {
+        color: #165DFF;
+        font-weight: 600;
+        position: relative;
+      }
+      .nav-active::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #165DFF;
+        border-radius: 3px;
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-light text-dark">
+  <!-- 头部导航 -->
+  <header class="bg-white sticky top-0 z-50 card-shadow">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center text-white">
+          <i class="fa fa-heartbeat text-xl"></i>
+        </div>
+        <h1 class="text-xl font-bold text-dark">医疗AI能力开放平台</h1>
+      </div>
+      <nav class="hidden md:flex space-x-8">
+        <a href="index.html" class="text-dark hover:text-primary transition-colors py-2">首页</a>
+        <a href="product-capabilities.html" class="nav-active py-2">产品能力</a>
+        <a href="ai-capabilities.html" class="text-dark hover:text-primary transition-colors py-2">AI技术能力</a>
+        <a href="usage-stats.html" class="text-dark hover:text-primary transition-colors py-2">使用统计</a>
+        <a href="department-distribution.html" class="text-dark hover:text-primary transition-colors py-2">科室分布</a>
+      </nav>
+      <!-- 移动端导航按钮 -->
+      <button class="md:hidden text-dark text-xl" id="mobile-menu-button">
+        <i class="fa fa-bars"></i>
+      </button>
+    </div>
+    <!-- 移动端导航菜单 -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200 py-4">
+      <div class="container mx-auto px-4">
+        <nav class="flex flex-col space-y-3">
+          <a href="index.html" class="py-2 px-3 text-dark hover:bg-gray-100 rounded-lg transition-colors">首页</a>
+          <a href="product-capabilities.html" class="py-2 px-3 bg-primary/10 text-primary rounded-lg font-medium">产品能力</a>
+          <a href="ai-capabilities.html" class="py-2 px-3 text-dark hover:bg-gray-100 rounded-lg transition-colors">AI技术能力</a>
+          <a href="usage-stats.html" class="py-2 px-3 text-dark hover:bg-gray-100 rounded-lg transition-colors">使用统计</a>
+          <a href="department-distribution.html" class="py-2 px-3 text-dark hover:bg-gray-100 rounded-lg transition-colors">科室分布</a>
+        </nav>
+      </div>
+    </div>
+    </header>
+
+    <script>
+      // 移动端导航菜单切换
+      document.getElementById('mobile-menu-button').addEventListener('click', function() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenu.classList.toggle('hidden');
+      });
+    </script>
+
+  <!-- 主要内容 -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- 面包屑导航 -->
+    <div class="flex items-center text-sm mb-6">
+      <a href="index.html" class="text-info hover:text-primary">首页</a>
+      <i class="fa fa-angle-right text-info mx-2"></i>
+      <span class="text-dark font-medium">产品能力详情</span>
+    </div>
+
+    <!-- 页面标题 -->
+    <div class="mb-8">
+      <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-2">产品能力详情</h2>
+      <p class="text-info">全面了解平台提供的各项产品能力，包括CDSS产品、内涵质控产品及API接口能力</p>
+    </div>
+
+    <!-- 产品能力概览 -->
+    <section class="mb-12">
+      <div class="bg-white rounded-xl p-6 card-shadow">
+        <h3 class="text-lg font-semibold text-dark mb-6">产品能力概览</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="border border-gray-200 rounded-xl p-5 hover-scale">
+            <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
+              <i class="fa fa-stethoscope text-2xl"></i>
+            </div>
+            <h4 class="text-lg font-medium mb-2">CDSS产品</h4>
+            <p class="text-info mb-4">临床决策支持系统，提供辅助诊断和辅助治疗功能</p>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-info">开放程度</span>
+              <span class="font-medium">92%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2 mt-1 mb-3">
+              <div class="bg-primary h-2 rounded-full" style="width: 92%"></div>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-info">日均调用量</span>
+              <span class="font-medium">58,432</span>
+            </div>
+          </div>
+          
+          <div class="border border-gray-200 rounded-xl p-5 hover-scale">
+            <div class="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center text-secondary mb-4">
+              <i class="fa fa-search text-2xl"></i>
+            </div>
+            <h4 class="text-lg font-medium mb-2">内涵质控产品</h4>
+            <p class="text-info mb-4">医疗数据质量控制，提供缺陷检测和分析功能</p>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-info">开放程度</span>
+              <span class="font-medium">88%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2 mt-1 mb-3">
+              <div class="bg-secondary h-2 rounded-full" style="width: 88%"></div>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-info">日均调用量</span>
+              <span class="font-medium">29,654</span>
+            </div>
+          </div>
+          
+          <div class="border border-gray-200 rounded-xl p-5 hover-scale">
+            <div class="w-14 h-14 rounded-full bg-success/10 flex items-center justify-center text-success mb-4">
+              <i class="fa fa-code text-2xl"></i>
+            </div>
+            <h4 class="text-lg font-medium mb-2">API接口能力</h4>
+            <p class="text-info mb-4">标准化接口服务，支持各类医疗AI功能的集成调用</p>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-info">开放程度</span>
+              <span class="font-medium">95%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2 mt-1 mb-3">
+              <div class="bg-success h-2 rounded-full" style="width: 95%"></div>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-info">日均调用量</span>
+              <span class="font-medium">89,765</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="h-60">
+          <canvas id="productUsageChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- CDSS产品详情 -->
+    <section class="mb-12">
+      <div class="bg-white rounded-xl p-6 card-shadow">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-dark">CDSS产品</h3>
+          <div class="flex space-x-2 mt-4 md:mt-0">
+            <button class="px-4 py-2 rounded-lg bg-primary text-white text-sm">全部</button>
+            <button class="px-4 py-2 rounded-lg bg-gray-100 text-info text-sm hover:bg-gray-200 transition-colors">辅助诊断</button>
+            <button class="px-4 py-2 rounded-lg bg-gray-100 text-info text-sm hover:bg-gray-200 transition-colors">辅助治疗</button>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- 辅助诊断 -->
+          <div class="border border-gray-200 rounded-xl p-6 hover-scale">
+            <div class="flex items-center mb-6">
+              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4">
+                <i class="fa fa-user-md text-xl"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold">辅助诊断</h4>
+                <p class="text-info text-sm">基于AI的疾病诊断辅助工具</p>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">准确率</p>
+                <p class="text-2xl font-bold text-primary">92.3%</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">敏感度</p>
+                <p class="text-2xl font-bold text-primary">94.7%</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">特异度</p>
+                <p class="text-2xl font-bold text-primary">89.5%</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">日均调用</p>
+                <p class="text-2xl font-bold text-primary">32,918</p>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <h5 class="font-medium mb-3">覆盖疾病范围</h5>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">心血管疾病</span>
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">呼吸系统疾病</span>
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">消化系统疾病</span>
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">神经系统疾病</span>
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">内分泌疾病</span>
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">肿瘤</span>
+                <span class="px-3 py-1 bg-gray-100 text-info text-sm rounded-full">+28种</span>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <h5 class="font-medium mb-3">技术特点</h5>
+              <ul class="space-y-2 text-sm">
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>基于多模态融合技术，整合病历、检验、影像等多维数据</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>采用深度学习算法，持续优化诊断准确性</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>支持罕见病和复杂疾病的辅助诊断</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>提供诊断依据和置信度说明，辅助医生决策</span>
+                </li>
+              </ul>
+            </div>
+            
+            <button class="w-full py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+              查看API文档 <i class="fa fa-angle-right ml-1"></i>
+            </button>
+          </div>
+          
+          <!-- 辅助治疗 -->
+          <div class="border border-gray-200 rounded-xl p-6 hover-scale">
+            <div class="flex items-center mb-6">
+              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4">
+                <i class="fa fa-medkit text-xl"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold">辅助治疗</h4>
+                <p class="text-info text-sm">基于循证医学的治疗方案推荐</p>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">医生采纳率</p>
+                <p class="text-2xl font-bold text-primary">87.6%</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">方案完整度</p>
+                <p class="text-2xl font-bold text-primary">95.2%</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">更新频率</p>
+                <p class="text-2xl font-bold text-primary">季度</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">日均调用</p>
+                <p class="text-2xl font-bold text-primary">25,514</p>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <h5 class="font-medium mb-3">支持治疗类型</h5>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">药物治疗</span>
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">手术方案</span>
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">康复计划</span>
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">慢病管理</span>
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">急诊处理</span>
+                <span class="px-3 py-1 bg-primary/10 text-primary text-sm rounded-full">危重症治疗</span>
+                <span class="px-3 py-1 bg-gray-100 text-info text-sm rounded-full">+15种</span>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <h5 class="font-medium mb-3">技术特点</h5>
+              <ul class="space-y-2 text-sm">
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>基于最新临床指南和研究证据</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>考虑患者个体差异，提供个性化治疗方案</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>药物相互作用和不良反应预警</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>治疗效果预测和随访方案推荐</span>
+                </li>
+              </ul>
+            </div>
+            
+            <button class="w-full py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+              查看API文档 <i class="fa fa-angle-right ml-1"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="h-60">
+          <canvas id="cdssTrendChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- 内涵质控产品详情 -->
+    <section class="mb-12">
+      <div class="bg-white rounded-xl p-6 card-shadow">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+          <h3 class="text-xl font-bold text-dark">内涵质控产品</h3>
+          <div class="flex space-x-2 mt-4 md:mt-0">
+            <button class="px-4 py-2 rounded-lg bg-primary text-white text-sm">全部</button>
+            <button class="px-4 py-2 rounded-lg bg-gray-100 text-info text-sm hover:bg-gray-200 transition-colors">AI引擎形式质控</button>
+            <button class="px-4 py-2 rounded-lg bg-gray-100 text-info text-sm hover:bg-gray-200 transition-colors">大模型复杂内涵质控</button>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- AI引擎形式质控缺陷检出 -->
+          <div class="border border-gray-200 rounded-xl p-6 hover-scale">
+            <div class="flex items-center mb-6">
+              <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary mr-4">
+                <i class="fa fa-search text-xl"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold">AI引擎形式质控缺陷检出</h4>
+                <p class="text-info text-sm">针对医疗文书格式规范的自动化检查</p>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">缺陷检出率</p>
+                <p class="text-2xl font-bold text-secondary">94.1%</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">准确率</p>
+                <p class="text-2xl font-bold text-secondary">96.8%</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">检查项数</p>
+                <p class="text-2xl font-bold text-secondary">128+</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">日均调用</p>
+                <p class="text-2xl font-bold text-secondary">18,107</p>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <h5 class="font-medium mb-3">检测范围</h5>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-secondary/10 text-secondary text-sm rounded-full">必填项缺失</span>
+                <span class="px-3 py-1 bg-secondary/10 text-secondary text-sm rounded-full">格式错误</span>
+                <span class="px-3 py-1 bg-secondary/10 text-secondary text-sm rounded-full">逻辑矛盾</span>
+                <span class="px-3 py-1 bg-secondary/10 text-secondary text-sm rounded-full">编码错误</span>
+                <span class="px-3 py-1 bg-secondary/10 text-secondary text-sm rounded-full">时限性违规</span>
+                <span class="px-3 py-1 bg-gray-100 text-info text-sm rounded-full">+45项</span>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <h5 class="font-medium mb-3">技术特点</h5>
+              <ul class="space-y-2 text-sm">
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>基于规则引擎和机器学习的双重检测机制</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>支持多种医疗文书类型的检测</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>提供缺陷定位和修正建议</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>支持自定义检测规则配置</span>
+                </li>
+              </ul>
+            </div>
+            
+            <button class="w-full py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors">
+              查看API文档 <i class="fa fa-angle-right ml-1"></i>
+            </button>
+          </div>
+          
+          <!-- 大模型复杂内涵缺陷检出 -->
+          <div class="border border-gray-200 rounded-xl p-6 hover-scale">
+            <div class="flex items-center mb-6">
+              <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary mr-4">
+                <i class="fa fa-bug text-xl"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold">大模型复杂内涵缺陷检出</h4>
+                <p class="text-info text-sm">基于大模型的医疗文书内容质量评估</p>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">复杂缺陷识别率</p>
+                <p class="text-2xl font-bold text-secondary">89.7%</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">语义理解准确率</p>
+                <p class="text-2xl font-bold text-secondary">93.4%</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">支持文书类型</p>
+                <p class="text-2xl font-bold text-secondary">25+</p>
+              </div>
+              <div class="bg-gray-50 rounded-lg p-4 text-center">
+                <p class="text-info text-sm mb-1">日均调用</p>
+                <p class="text-2xl font-bold text-secondary">11,547</p>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <h5 class="font-medium mb-3">检测能力</h5>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-secondary/10 text-secondary text-sm rounded-full">诊断依据缺失</span>
+                <span class="px-3 py-1 bg-secondary/10 text-secondary text-sm rounded-full">治疗方案不合理</span>
+                <span class="px-3 py-1 bg-secondary/10 text-secondary text-sm rounded-full">病程记录不连贯</span>
+                <span class="px-3 py-1 bg-secondary/10 text-secondary text-sm rounded-full">医嘱执行记录缺失</span>
+                <span class="px-3 py-1 bg-secondary/10 text-secondary text-sm rounded-full">并发症记录不全</span>
+                <span class="px-3 py-1 bg-gray-100 text-info text-sm rounded-full">+32项</span>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <h5 class="font-medium mb-3">技术特点</h5>
+              <ul class="space-y-2 text-sm">
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>基于医疗领域大语言模型</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>具备深度语义理解和推理能力</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>支持上下文关联分析</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-success mt-1 mr-2"></i>
+                  <span>提供详细的缺陷说明和改进建议</span>
+                </li>
+              </ul>
+            </div>
+            
+            <button class="w-full py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors">
+              查看API文档 <i class="fa fa-angle-right ml-1"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="h-60">
+          <canvas id="qualityControlChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- API接口能力详情 -->
+    <section class="mb-12">
+      <div class="bg-white rounded-xl p-6 card-shadow">
+        <h3 class="text-xl font-bold text-dark mb-6">API接口能力</h3>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <!-- 辅助诊断接口 -->
+          <div class="border border-gray-200 rounded-xl p-6 hover-scale">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center text-success mr-3">
+                  <i class="fa fa-code"></i>
+                </div>
+                <h4 class="font-medium">辅助诊断接口</h4>
+              </div>
+              <span class="px-3 py-1 bg-success/10 text-success text-xs rounded-full">完全开放</span>
+            </div>
+            
+            <div class="space-y-4 mb-6">
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="text-info">接口稳定性</span>
+                  <span class="font-medium">99.95%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-success h-2 rounded-full" style="width: 99.95%"></div>
+                </div>
+              </div>
+              
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="text-info">平均响应时间</span>
+                  <span class="font-medium">120ms</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-success h-2 rounded-full" style="width: 90%"></div>
+                </div>
+              </div>
+              
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="text-info">QPS支持</span>
+                  <span class="font-medium">5000</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-success h-2 rounded-full" style="width: 85%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <h5 class="font-medium mb-3 text-sm">接口功能</h5>
+              <ul class="space-y-1 text-sm">
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>多模态数据输入支持</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>实时诊断结果返回</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>诊断依据和置信度</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>多种疾病类型覆盖</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="flex space-x-2">
+              <button class="flex-1 py-2 bg-success text-white rounded-lg text-sm hover:bg-success/90 transition-colors">
+                API文档
+              </button>
+              <button class="flex-1 py-2 border border-success text-success rounded-lg text-sm hover:bg-success/5 transition-colors">
+                调用示例
+              </button>
+            </div>
+          </div>
+          
+          <!-- 辅助治疗接口 -->
+          <div class="border border-gray-200 rounded-xl p-6 hover-scale">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center text-success mr-3">
+                  <i class="fa fa-code"></i>
+                </div>
+                <h4 class="font-medium">辅助治疗接口</h4>
+              </div>
+              <span class="px-3 py-1 bg-success/10 text-success text-xs rounded-full">完全开放</span>
+            </div>
+            
+            <div class="space-y-4 mb-6">
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="text-info">接口稳定性</span>
+                  <span class="font-medium">99.92%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-success h-2 rounded-full" style="width: 99.92%"></div>
+                </div>
+              </div>
+              
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="text-info">平均响应时间</span>
+                  <span class="font-medium">150ms</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-success h-2 rounded-full" style="width: 85%"></div>
+                </div>
+              </div>
+              
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="text-info">QPS支持</span>
+                  <span class="font-medium">4000</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-success h-2 rounded-full" style="width: 80%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <h5 class="font-medium mb-3 text-sm">接口功能</h5>
+              <ul class="space-y-1 text-sm">
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>治疗方案个性化推荐</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>药物相互作用检查</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>治疗效果预测</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>随访计划生成</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="flex space-x-2">
+              <button class="flex-1 py-2 bg-success text-white rounded-lg text-sm hover:bg-success/90 transition-colors">
+                API文档
+              </button>
+              <button class="flex-1 py-2 border border-success text-success rounded-lg text-sm hover:bg-success/5 transition-colors">
+                调用示例
+              </button>
+            </div>
+          </div>
+          
+          <!-- 内涵缺陷检出接口 -->
+          <div class="border border-gray-200 rounded-xl p-6 hover-scale">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center text-success mr-3">
+                  <i class="fa fa-code"></i>
+                </div>
+                <h4 class="font-medium">内涵缺陷检出接口</h4>
+              </div>
+              <span class="px-3 py-1 bg-warning/10 text-warning text-xs rounded-full">部分开放</span>
+            </div>
+            
+            <div class="space-y-4 mb-6">
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="text-info">接口稳定性</span>
+                  <span class="font-medium">99.88%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-success h-2 rounded-full" style="width: 99.88%"></div>
+                </div>
+              </div>
+              
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="text-info">平均响应时间</span>
+                  <span class="font-medium">200ms</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-success h-2 rounded-full" style="width: 75%"></div>
+                </div>
+              </div>
+              
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="text-info">QPS支持</span>
+                  <span class="font-medium">3000</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-success h-2 rounded-full" style="width: 70%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <h5 class="font-medium mb-3 text-sm">接口功能</h5>
+              <ul class="space-y-1 text-sm">
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>格式和内容缺陷检测</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>缺陷严重程度评估</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>修正建议提供</span>
+                </li>
+                <li class="flex items-center">
+                  <i class="fa fa-check text-success mr-2"></i>
+                  <span>质量评分生成</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="flex space-x-2">
+              <button class="flex-1 py-2 bg-success text-white rounded-lg text-sm hover:bg-success/90 transition-colors">
+                API文档
+              </button>
+              <button class="flex-1 py-2 border border-success text-success rounded-lg text-sm hover:bg-success/5 transition-colors">
+                调用示例
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="border border-gray-200 rounded-xl p-6">
+          <h4 class="font-semibold mb-4">API接入流程</h4>
+          <div class="flex flex-col md:flex-row">
+            <div class="flex-1 md:border-r border-gray-200 p-4 text-center">
+              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-3">
+                <i class="fa fa-user-plus text-xl"></i>
+              </div>
+              <h5 class="font-medium mb-2">1. 注册账号</h5>
+              <p class="text-sm text-info">在开放平台注册开发者账号</p>
+            </div>
+            
+            <div class="flex-1 md:border-r border-gray-200 p-4 text-center">
+              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-3">
+                <i class="fa fa-key text-xl"></i>
+              </div>
+              <h5 class="font-medium mb-2">2. 获取API密钥</h5>
+              <p class="text-sm text-info">创建应用并获取API访问凭证</p>
+            </div>
+            
+            <div class="flex-1 md:border-r border-gray-200 p-4 text-center">
+              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-3">
+                <i class="fa fa-book text-xl"></i>
+              </div>
+              <h5 class="font-medium mb-2">3. 阅读文档</h5>
+              <p class="text-sm text-info">查看详细的API文档和使用指南</p>
+            </div>
+            
+            <div class="flex-1 p-4 text-center">
+              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mx-auto mb-3">
+                <i class="fa fa-rocket text-xl"></i>
+              </div>
+              <h5 class="font-medium mb-2">4. 开始调用</h5>
+              <p class="text-sm text-info">集成API并开始使用平台能力</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-white border-t border-gray-200 py-8">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="flex items-center space-x-3 mb-4 md:mb-0">
+          <div class="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center text-white">
+            <i class="fa fa-heartbeat text-xl"></i>
+          </div>
+          <span class="font-bold text-dark">医疗AI能力开放平台</span>
+        </div>
+        
+        <div class="flex space-x-6 mb-4 md:mb-0">
+          <a href="index.html" class="text-info hover:text-primary transition-colors">首页</a>
+          <a href="product-capabilities.html" class="text-primary font-medium">产品能力</a>
+          <a href="ai-capabilities.html" class="text-info hover:text-primary transition-colors">AI技术能力</a>
+          <a href="usage-stats.html" class="text-info hover:text-primary transition-colors">使用统计</a>
+          <a href="department-distribution.html" class="text-info hover:text-primary transition-colors">科室分布</a>
+        </div>
+        
+        <div class="flex space-x-4">
+          <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-info hover:bg-primary/10 hover:text-primary transition-colors">
+            <i class="fa fa-weixin"></i>
+          </a>
+          <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-info hover:bg-primary/10 hover:text-primary transition-colors">
+            <i class="fa fa-weibo"></i>
+          </a>
+          <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-info hover:bg-primary/10 hover:text-primary transition-colors">
+            <i class="fa fa-github"></i>
+          </a>
+        </div>
+      </div>
+      
+      <div class="mt-6 pt-6 border-t border-gray-200 text-center text-info text-sm">
+        <p>© 2023 医疗AI能力开放平台. 保留所有权利.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // 产品使用情况图表
+    const productUsageCtx = document.getElementById('productUsageChart').getContext('2d');
+    const productUsageChart = new Chart(productUsageCtx, {
+      type: 'bar',
+      data: {
+        labels: ['CDSS产品', '内涵质控产品', 'API接口能力'],
+        datasets: [
+          {
+            label: '日均调用量',
+            data: [58432, 29654, 89765],
+            backgroundColor: '#165DFF',
+            borderRadius: 4
+          },
+          {
+            label: '月增长百分比',
+            data: [23, 18, 28],
+            backgroundColor: '#36CFC9',
+            borderRadius: 4,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                if (value >= 1000) {
+                  return (value / 1000) + 'k';
+                }
+                return value;
+              }
+            }
+          },
+          y1: {
+            beginAtZero: true,
+            position: 'right',
+            grid: {
+              drawOnChartArea: false
+            },
+            ticks: {
+              callback: function(value) {
+                return value + '%';
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // CDSS产品趋势图
+    const cdssTrendCtx = document.getElementById('cdssTrendChart').getContext('2d');
+    const cdssTrendChart = new Chart(cdssTrendCtx, {
+      type: 'line',
+      data: {
+        labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+        datasets: [
+          {
+            label: '辅助诊断',
+            data: [25000, 28000, 30000, 31500, 32918, 34500],
+            borderColor: '#165DFF',
+            backgroundColor: 'rgba(22, 93, 255, 0.1)',
+            tension: 0.4,
+            fill: true
+          },
+          {
+            label: '辅助治疗',
+            data: [18000, 20000, 22000, 23500, 25514, 27000],
+            borderColor: '#36CFC9',
+            backgroundColor: 'rgba(54, 207, 201, 0.1)',
+            tension: 0.4,
+            fill: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                if (value >= 1000) {
+                  return (value / 1000) + 'k';
+                }
+                return value;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // 质控产品效果对比图
+    const qualityControlCtx = document.getElementById('qualityControlChart').getContext('2d');
+    const qualityControlChart = new Chart(qualityControlCtx, {
+      type: 'radar',
+      data: {
+        labels: ['缺陷检出率', '准确率', '召回率', '处理速度', '用户满意度', '稳定性'],
+        datasets: [
+          {
+            label: 'AI引擎形式质控',
+            data: [94, 97, 92, 95, 90, 99],
+            borderColor: '#165DFF',
+            backgroundColor: 'rgba(22, 93, 255, 0.2)',
+          },
+          {
+            label: '大模型复杂内涵质控',
+            data: [90, 93, 88, 85, 92, 98],
+            borderColor: '#36CFC9',
+            backgroundColor: 'rgba(54, 207, 201, 0.2)',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            beginAtZero: true,
+            max: 100
+          }
+        }
+      }
+    });
+
+    // 动画效果
+    document.querySelectorAll('.hover-scale').forEach(element => {
+      element.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.02)';
+        this.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)';
+        this.style.transition = 'all 0.3s ease';
+      });
+      
+      element.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+        this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.08)';
+        this.style.transition = 'all 0.3s ease';
+      });
+    });
+  </script>
+</body>
+</html>
